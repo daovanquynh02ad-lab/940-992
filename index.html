@@ -152,23 +152,18 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            text-decoration: none; /* Убираем подчеркивание у ссылки TG */
+            text-decoration: none;
+        }
+        .theme-toggle i {
+            font-size: 1.2rem;
+            color: var(--text-secondary);
         }
         .theme-toggle:hover {
             color: var(--text-primary);
             border-color: var(--text-primary);
         }
-        .progress-pill {
-            background: var(--card-bg);
-            padding: 6px 14px;
-            border-radius: 20px;
-            font-size: 0.9rem;
-            font-weight: 600;
-            border: 1px solid var(--border);
-            color: var(--text-secondary);
-        }
 
-        /* --- ЭКРАН ТЕСТА --- */
+        /* --- КАРТОЧКА ВОПРОСА --- */
         .quiz-card {
             background: var(--card-bg);
             border-radius: 20px;
@@ -328,7 +323,7 @@
             color: var(--text-primary);
             box-shadow: var(--shadow);
         }
-        .nav-btn:hover:not(:disabled) {
+        .nav-btn:hover:not(.disabled) {
             background: var(--bg);
             border-color: var(--accent);
         }
@@ -378,9 +373,7 @@
         .stat-val.correct { color: var(--success); }
         .stat-val.error { color: var(--error); }
         
-        /* --- ИКОНКА TG (УБРАНА) --- */
-        /* .tg-fab { ... } */
-        
+        /* --- АНИМАЦИИ --- */
         @keyframes fadeIn {
             from { opacity: 0; }
             to { opacity: 1; }
@@ -397,7 +390,7 @@
                     <i class="fab fa-telegram-plane"></i>
                 </a>
                 <button class="theme-toggle" onclick="toggleTheme()" id="theme-toggle-btn-start">
-                    <i class="fas fa-gear"></i>
+                    <i class="fas fa-moon"></i>
                 </button>
             </div>
             <div class="start-header">
@@ -428,7 +421,7 @@
                         <i class="fab fa-telegram-plane"></i>
                     </a>
                     <button class="theme-toggle" onclick="toggleTheme()" id="theme-toggle-btn-quiz">
-                        <i class="fas fa-gear"></i>
+                        <i class="fas fa-moon"></i>
                     </button>
                 </div>
             </div>
@@ -554,7 +547,7 @@
             {id:973,q:"Гастроэзофагальный рефлюкс представляет собой:",opts:["процесс попадания содержимого пищевода в желудок","процесс попадания содержимого желудка в пищевод","механизмы, обеспечивающие попадание пищи в желудок","процесс нейтрализации кислого содержимого пищи"],correct:[1]},
             {id:974,q:"Анемия после удаления части желудка развивается вследствие недостатка…",opts:["фибринстабилизирующего фактора","внутреннего фактора Касла","пепсиногена","фактора Хагемана","внешнего фактора Касла"],correct:[1]},
             {id:975,q:"рН желудочного содержимого натощак составляет:",opts:["3,1-4,0","7,0-8,5","1,5-2,0","0,1-0,8"],correct:[2]},
-            {id:976,q:"рН желудочного содержимого в желудочную фазу может достигать:",opts:["3,1-4,0","7,0-8,5","0,8-1,0","1,5-2,0"],correct:[2]},
+            {id:976,q:"рН желудочного содержимого в желудочную фазу может достигать:",opts:["3,1-4,0","7,0-8-5","0,8-1,0","1,5-2,0"],correct:[2]},
             {id:977,q:"рН желудочного содержимого во время приема пищи составляет:",opts:["3,1-4,0","0,8-1,0","1,5-2,0","8,0-9,0"],correct:[0]},
             {id:978,q:"Протеолитические ферменты секрета желудка в щелочной среде…",opts:["ингибируются","не изменяют своих свойств","активируются"],correct:[0]},
             {id:979,q:"С наименьшей скоростью из желудка эвакуируются…",opts:["белки","витамины","жиры","углеводы"],correct:[2]},
@@ -572,13 +565,13 @@
             {id:991,q:"Электрогастрография – это регистрация суммарной электрической активности…",opts:["кишечника","стенки сосудов","двенадцатиперстной кишки","желудка"],correct:[3]},
             {id:992,q:"Одновременная и полная характеристика секреторной и моторной функции желудка осуществляется с помощью:",opts:["зондирования желудка","рентгеноскопии","рентгенографии","электрогастрографии"],correct:[0]}
         ];
-        
+
         // --- ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ---
         let activeQuestions = [];
         let currentIndex = 0;
         let userAnswers = {}; // { "902": { selected: Set, isSubmitted: bool, isCorrect: bool }, ... }
         let currentMode = 'default';
-        const storageKey = 'physio_quiz_progress_v8_pro'; // Новая версия
+        const storageKey = 'physio_quiz_progress_v8_pro';
 
         // --- DOM ЭЛЕМЕНТЫ ---
         const screens = {
@@ -624,7 +617,7 @@
         }
 
         function loadTheme() {
-            const theme = localStorage.getItem('gi_theme') || 'light'; // PRO по умолчанию светлый
+            const theme = localStorage.getItem('gi_theme') || 'light';
             if (theme === 'dark') {
                 document.body.setAttribute('data-theme', 'dark');
                 themeToggleBtns.forEach(btn => btn.innerHTML = '<i class="fas fa-sun"></i>');
@@ -682,33 +675,37 @@
             }
             const state = userAnswers[q.id];
 
+            // Обновляем текст
             progressPill.textContent = `${currentIndex + 1} / ${activeQuestions.length}`;
             qIdEl.textContent = `#${q.id}`;
             qTextEl.textContent = q.q;
 
+            // Анимация
             cardContainer.style.animation = 'none';
             if (!isFirstLoad) {
                 void cardContainer.offsetWidth; // Force reflow
                 cardContainer.style.animation = `fadeIn 0.3s ease-out`;
             }
 
+            // Рендер опций
             optionsList.innerHTML = '';
             q.opts.forEach((optText, idx) => {
                 const div = document.createElement('div');
                 div.className = 'option';
-                div.innerHTML = `<div class="option-marker"><i class="fas"></i></div><div class="option-text">${optText}</div>`;
+                div.innerHTML = `<div class="option-marker"></div><span class="option-text">${optText}</span>`;
 
+                const marker = div.querySelector('.option-marker');
                 const markerIcon = div.querySelector('.option-marker i');
 
                 if (state.isSubmitted) {
                     div.classList.add('disabled');
                     if (q.correct.includes(idx)) {
                         div.classList.add('correct');
-                        markerIcon.classList.add('fa-check');
+                        marker.innerHTML = '<i class="fas fa-check"></i>';
                     }
                     else if (state.selected.has(idx)) {
                         div.classList.add('incorrect');
-                        markerIcon.classList.add('fa-times');
+                        marker.innerHTML = '<i class="fas fa-times"></i>';
                     }
                     if (q.correct.includes(idx) && !state.selected.has(idx)) {
                         div.classList.add('missed');
@@ -716,7 +713,7 @@
                 } else {
                     if (state.selected.has(idx)) {
                         div.classList.add('selected');
-                        markerIcon.classList.add('fa-check');
+                        marker.innerHTML = '<i class="fas fa-check"></i>';
                     }
                     div.onclick = () => toggleOption(q.id, idx);
                 }
@@ -737,7 +734,7 @@
             options.forEach((opt, i) => { 
                 if (i === idx) {
                     opt.classList.toggle('selected');
-                    opt.querySelector('.option-marker i').classList.toggle('fa-check', state.selected.has(idx));
+                    opt.querySelector('.option-marker').innerHTML = state.selected.has(idx) ? '<i class="fas fa-check"></i>' : '';
                 }
             });
             updateFooter(state);
