@@ -1163,15 +1163,19 @@ function updateQuestionState() {
     els.status.textContent = "Выбери вариант(ы) ответа.";
     els.status.className = "status info";
   } else if (isQuestionCorrect(current)) {
-    els.status.textContent = "✔ Все верно, можно переходить дальше.";
+    els.status.textContent = "✔ Все верно.";
     els.status.className = "status ok";
   } else {
     els.status.textContent = "✘ Есть ошибки, попробуй ещё.";
     els.status.className = "status bad";
   }
 
-  els.next.disabled = !isQuestionCorrect(current);
+  // Кнопка "Вперёд" БОЛЬШЕ НЕ БЛОКИРУЕТСЯ
+  els.next.disabled = false;
+
   els.progress.textContent = `Вопрос ${current + 1} из ${questions.length}`;
+}
+
 }
 
 function renderQuestion() {
@@ -1216,16 +1220,13 @@ function renderQuestion() {
 }
 
 els.next.addEventListener("click", () => {
-  if (!isQuestionCorrect(current)) {
-    els.status.textContent = "Сначала выбери все правильные варианты без ошибок.";
-    els.status.className = "status bad";
-    return;
-  }
+  // НИЧЕГО не проверяем, просто переходим к следующему
   if (current < questions.length - 1) {
     current++;
     renderQuestion();
   }
 });
+
 
 els.prev.addEventListener("click", () => {
   if (current > 0) {
