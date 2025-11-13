@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Физиология ЖКТ (902-992)</title>
+    <title>Физиология ЖКТ (Ultimate)</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
@@ -404,7 +404,7 @@
         <div id="start-screen" class="screen active">
             <div class="hero-card">
                 <div class="hero-title">Тренажер по Физиологии</div>
-                <p class="hero-text">Вопросы 902–992<br>ЖКТ</p>
+                <p class="hero-text">Вопросы 902–992<br>Анатомия, Слюноотделение, Желудок</p>
                 
                 <div id="resume-block" style="display:none">
                     <button class="menu-btn btn-primary" onclick="startQuiz('resume')">
@@ -566,11 +566,11 @@
         ];
 
         // --- ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ---
-        let activeQuestions = []; // Активный массив вопросов (может быть перемешан или отфильтрован)
+        let activeQuestions = [];
         let currentIndex = 0;
         let userAnswers = {}; // { "902": { selected: Set, isSubmitted: bool, isCorrect: bool }, ... }
         let currentMode = 'default';
-        const storageKey = 'physio_quiz_progress_v3';
+        const storageKey = 'physio_quiz_progress_v4_advanced'; // Новая версия для сброса
 
         // --- DOM ЭЛЕМЕНТЫ ---
         const screens = {
@@ -583,7 +583,7 @@
         const cardContainer = document.getElementById('card-container');
         const qIdDisplay = document.getElementById('q-id-display');
         const qTextEl = document.getElementById('q-text');
-        const optionsList = document.getElementById('options-area');
+        const optionsList = document.getElementById('options-list');
         const prevBtn = document.getElementById('prev-btn');
         const mainBtn = document.getElementById('main-btn');
         const nextBtn = document.getElementById('next-btn');
@@ -594,7 +594,7 @@
         document.addEventListener('DOMContentLoaded', () => {
             loadTheme();
             if (localStorage.getItem(storageKey)) {
-                resumeBtn.style.display = 'block';
+                resumeBtn.style.display = 'flex';
             }
         });
 
@@ -615,9 +615,9 @@
         function loadTheme() {
             if (localStorage.getItem('gi_theme') === 'dark') {
                 document.body.setAttribute('data-theme', 'dark');
-                if (themeToggleBtn) themeToggleBtn.innerHTML = '<i class="fas fa-sun"></i>';
+                themeToggleBtn.innerHTML = '<i class="fas fa-sun"></i>';
             } else {
-                if (themeToggleBtn) themeToggleBtn.innerHTML = '<i class="fas fa-moon"></i>';
+                themeToggleBtn.innerHTML = '<i class="fas fa-moon"></i>';
             }
         }
 
@@ -641,26 +641,16 @@
                 currentIndex = 0;
                 userAnswers = {}; // Сбрасываем ответы для нового прогона
             } else { // 'new' or 'shuffle'
-                activeQuestions = [...fullQuizData];
+                // Глубокое копирование, чтобы не испортить оригинал
+                activeQuestions = JSON.parse(JSON.stringify(fullQuizData)); 
                 if (mode === 'shuffle') {
                     // Перемешиваем вопросы
                     shuffleArray(activeQuestions);
                     // И перемешиваем варианты в каждом вопросе
                     activeQuestions.forEach(q => {
-                        // Сохраняем оригинальные индексы правильных ответов
-                        const correctOriginalIndices = q.correct;
-                        
-                        // Создаем массив объектов {текст, оригинальный_индекс}
-                        let optionsToShuffle = q.opts.map((opt, i) => ({ text: opt, originalIndex: i }));
-                        
-                        // Перемешиваем
-                        shuffleArray(optionsToShuffle);
-                        
-                        // Обновляем опции и правильные ответы
-                        q.opts = optionsToShuffle.map(item => item.text);
-                        q.correct = correctOriginalIndices.map(originalIdx => 
-                            optionsToShuffle.findIndex(item => item.originalIndex === originalIdx)
-                        );
+                        const correctOriginalTexts = q.correct.map(idx => q.opts[idx]);
+                        shuffleArray(q.opts);
+                        q.correct = correctOriginalTexts.map(text => q.opts.findIndex(opt => opt === text));
                     });
                 }
                 currentIndex = 0;
@@ -671,7 +661,7 @@
             switchScreen('quiz');
             renderQuestion(true); // true = первая загрузка, без анимации "вправо"
         }
-
+        
         // --- ЛОГИКА РЕНДЕРА ВОПРОСА ---
         function renderQuestion(isFirstLoad = false, direction = 'right') {
             const q = activeQuestions[currentIndex];
@@ -683,10 +673,8 @@
             const state = userAnswers[q.id];
 
             // Обновляем текст
-            if (topProgress) topProgress.textContent = `${currentIndex + 1} / ${activeQuestions.length}`;
-            document.getElementById('question-id').textContent = q.id;
-            document.getElementById('current-q-num').textContent = currentIndex + 1;
-            document.getElementById('total-q-num').textContent = activeQuestions.length;
+            topProgress.textContent = `${currentIndex + 1} / ${activeQuestions.length}`;
+            qIdDisplay.textContent = `#${q.id}`;
             qTextEl.textContent = q.q;
 
             // Анимация
@@ -700,25 +688,18 @@
             optionsList.innerHTML = '';
             q.opts.forEach((optText, idx) => {
                 const div = document.createElement('div');
-                div.className = 'option-item';
-                
-                // Создаем структуру: номер + текст
-                div.innerHTML = `<span class="option-number">${idx + 1}.</span><span class="option-text">${optText}</span>`;
+                div.className = 'option';
+                // *** ИСПРАВЛЕНИЕ: Добавлен маркер в HTML ***
+                div.innerHTML = `<div class="option-marker">${idx + 1}</div><div>${optText}</div>`;
 
                 if (state.isSubmitted) {
-                    div.classList.add('submitted');
-                    if (q.correct.includes(idx)) {
-                        div.classList.add('correct');
-                    } else if (state.selected.has(idx)) {
-                        div.classList.add('incorrect');
-                    }
-                    if (q.correct.includes(idx) && !state.selected.has(idx)) {
-                        div.classList.add('missed');
-                    }
+                    div.classList.add('disabled');
+                    if (q.correct.includes(idx)) div.classList.add('correct');
+                    else if (state.selected.has(idx)) div.classList.add('incorrect');
+                    
+                    if (q.correct.includes(idx) && !state.selected.has(idx)) div.classList.add('missed');
                 } else {
-                    if (state.selected.has(idx)) {
-                        div.classList.add('selected');
-                    }
+                    if (state.selected.has(idx)) div.classList.add('selected');
                     div.onclick = () => toggleOption(q.id, idx);
                 }
                 optionsList.appendChild(div);
@@ -734,13 +715,11 @@
             if (state.selected.has(idx)) state.selected.delete(idx);
             else state.selected.add(idx);
             
-            // Перерисовываем только опции, а не всю карточку
-            const options = document.querySelectorAll('.option-item');
+            const options = document.querySelectorAll('.option');
             options.forEach((opt, i) => {
                 if (i === idx) opt.classList.toggle('selected');
             });
             
-            // Обновляем состояние кнопки
             updateControls(state);
         }
 
@@ -755,15 +734,18 @@
             } else {
                 mainBtn.textContent = "Ответить";
                 mainBtn.disabled = (state.selected.size === 0);
-                nextBtn.disabled = true; // Нельзя перелистнуть, не ответив
+                nextBtn.disabled = true;
             }
 
             if (currentIndex === activeQuestions.length - 1) {
-                nextBtn.textContent = "Завершить";
-                nextBtn.onclick = showResults;
+                mainBtn.textContent = state.isSubmitted ? "Завершить" : "Ответить";
+                if(state.isSubmitted) mainBtn.onclick = finishQuiz;
+                else mainBtn.onclick = checkAnswer;
+
+                nextBtn.disabled = true; // На последнем вопросе "Вперед" неактивна
             } else {
-                nextBtn.textContent = "Вперед →";
-                nextBtn.onclick = goToNext;
+                mainBtn.onclick = checkAnswer;
+                nextBtn.onclick = nextQ; // Убедимся, что nextQ назначен
             }
         }
 
@@ -790,25 +772,15 @@
             }
         }
 
-        function goToNext() { nextQ(); }
-
-        function goToPrev() {
+        function prevQ() {
             if (currentIndex > 0) {
                 currentIndex--;
                 renderQuestion(false, 'left');
             }
         }
 
-        // --- НАВИГАЦИЯ ПО ЭКРАНАМ ---
-        function switchScreen(name) {
-            Object.values(screens).forEach(s => s.style.display = 'none');
-            screens[name].style.display = 'block';
-            if (name === 'quiz' && topProgress) topProgress.style.display = 'block';
-            else if (topProgress) topProgress.style.display = 'none';
-        }
-
         // --- РЕЗУЛЬТАТЫ И СОХРАНЕНИЕ ---
-        function showResults() {
+        function finishQuiz() {
             let correctCount = 0;
             activeQuestions.forEach(q => {
                 if(userAnswers[q.id] && userAnswers[q.id].isCorrect) {
@@ -820,12 +792,11 @@
             const percent = Math.round((correctCount / total) * 100);
 
             document.getElementById('final-score').textContent = `${percent}%`;
-            document.getElementById('correct-count').textContent = correctCount;
-            document.getElementById('total-count').textContent = total;
+            document.getElementById('correct-val').textContent = correctCount;
+            document.getElementById('error-val').textContent = total - correctCount;
 
-            const mistakesBtn = document.getElementById('mistakes-btn');
             if (correctCount < total && currentMode !== 'mistakes') {
-                mistakesBtn.style.display = 'inline-block';
+                mistakesBtn.style.display = 'flex';
             } else {
                 mistakesBtn.style.display = 'none';
             }
@@ -838,6 +809,7 @@
         }
 
         function saveProgress() {
+            // Конвертируем Set в Array для JSON
             const serializableAnswers = {};
             for (const id in userAnswers) {
                 serializableAnswers[id] = {
@@ -849,8 +821,10 @@
             const progress = {
                 currentMode: currentMode,
                 currentIndex: currentIndex,
-                questionOrder: activeQuestions.map(q => q.id),
-                answers: serializableAnswers
+                questionOrder: activeQuestions.map(q => q.id), // Сохраняем порядок
+                answers: serializableAnswers,
+                // Сохраняем "сырые" данные на случай, если режим 'shuffle'
+                rawQuestions: activeQuestions 
             };
             localStorage.setItem(storageKey, JSON.stringify(progress));
         }
@@ -862,23 +836,42 @@
             currentMode = savedData.currentMode;
             currentIndex = savedData.currentIndex;
             
-            activeQuestions = savedData.questionOrder.map(id => 
-                fullQuizData.find(q => q.id === id)
-            );
+            // Восстанавливаем сохраненный массив вопросов (с перемешанными опциями или без)
+            activeQuestions = savedData.rawQuestions; 
             
+            // Восстанавливаем ответы и Set'ы
             userAnswers = savedData.answers;
             for (const id in userAnswers) {
-                userAnswers[id].selected = new Set(userAnswers[id].selected);
+                if (userAnswers[id]) { // Проверка на null/undefined
+                    userAnswers[id].selected = new Set(userAnswers[id].selected);
+                }
             }
             return true;
         }
+        
+        function switchScreen(screenName) {
+            Object.values(screens).forEach(s => s.style.display = 'none');
+            screens[screenName].style.display = 'flex';
+            if(screenName === 'quiz') topProgress.style.display = 'block';
+            else topProgress.style.display = 'none';
+        }
 
+        // --- ХЕЛПЕР ---
         function shuffleArray(array) {
             for (let i = array.length - 1; i > 0; i--) {
                 const j = Math.floor(Math.random() * (i + 1));
                 [array[i], array[j]] = [array[j], array[i]];
             }
         }
+        
+        // --- УПРАВЛЕНИЕ С КЛАВИАТУРЫ ---
+        document.addEventListener('keydown', (e) => {
+            if (screens.quiz.style.display === 'flex') {
+                if (e.key === 'ArrowRight') nextBtn.click();
+                if (e.key === 'ArrowLeft') prevBtn.click();
+                if (e.key === 'Enter') mainBtn.click();
+            }
+        });
         
     </script>
 </body>
