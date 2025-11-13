@@ -3,69 +3,52 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Физиология (Тест-Драйв)</title>
+    <title>Тренажер (PRO Демо)</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
-    
     <style>
         :root {
-            --bg: #F4F4F5;
+            --bg: #F9F9F9;
             --card-bg: #FFFFFF;
-            --text-primary: #000000;
-            --text-secondary: #52525B;
-            --accent-yellow: #FFDD00;
-            --accent-yellow-dark: #E6C600;
-            --text-on-accent: #000000;
-            --border: #E4E4E7;
-            
-            --success: #10B981;
-            --success-light: #F0FDF4;
-            --error: #EF4444;
-            --error-light: #FEF2F2;
-            
-            --tg-color: #2481cc;
+            --text-primary: #111111;
+            --text-secondary: #555555;
+            --accent: #5E5CE6; /* Apple Purple */
+            --accent-light: #F5F5FF;
+            --success: #34C759;
+            --success-light: #F0FFF4;
+            --error: #FF3B30;
+            --error-light: #FFF0F0;
+            --border: #E5E5E5;
+            --shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.07), 0 4px 6px -2px rgba(0, 0, 0, 0.03);
             --font: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            --tg-color: #2481cc;
         }
 
         [data-theme="dark"] {
-            --bg: #18181B;
-            --card-bg: #27272A;
+            --bg: #000000;
+            --card-bg: #1C1C1E;
             --text-primary: #FFFFFF;
-            --text-secondary: #A1A1AA;
-            --accent-yellow: #FFDD00;
-            --accent-yellow-dark: #FFEC80;
-            --text-on-accent: #000000;
-            --border: #3F3F46;
-
-            --success: #22C55E;
-            --success-light: #166534;
-            --error: #F87171;
-            --error-light: #7F1D1D;
+            --text-secondary: #8D8D93;
+            --accent: #5E5CE6;
+            --accent-light: #2C2C2E;
+            --success: #30D158;
+            --success-light: #2C2C2E;
+            --error: #FF453A;
+            --error-light: #2C2C2E;
+            --border: #3A3A3C;
+            --shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        
-        html, body {
-            font-family: var(--font);
-            background-color: var(--bg-color);
-            color: var(--text-primary);
-            min-height: 100vh;
-        }
+        html, body { font-family: var(--font); background-color: var(--bg); color: var(--text-primary); min-height: 100vh; }
 
-        .container {
-            max-width: 640px;
-            width: 100%;
-            margin: 0 auto;
-            padding: 20px 20px 140px 20px; /* Отступ для футера */
-        }
+        .container { max-width: 640px; width: 100%; margin: 0 auto; padding: 20px 20px 140px 20px; }
 
-        /* --- ЭКРАНЫ --- */
-        .screen { display: none; flex-direction: column; width: 100%; flex: 1; }
-        .screen.active { display: flex; animation: fadeIn 0.3s ease-out; }
+        .screen { display: none; flex-direction: column; width: 100%; flex: 1; animation: fadeIn 0.3s ease-out; }
+        .screen.active { display: flex; }
         
-        /* --- СТАРТОВЫЙ ЭКРАН --- */
         .start-header { margin: 40px 0; }
         .start-header h1 { font-size: 2.5rem; font-weight: 700; color: var(--text-primary); margin-bottom: 10px; }
         .start-header p { font-size: 1.1rem; color: var(--text-secondary); line-height: 1.6; }
@@ -74,100 +57,98 @@
         .menu-btn {
             padding: 16px; border: 2px solid var(--border); border-radius: 12px; font-size: 1rem; font-weight: 500; cursor: pointer;
             background: var(--card-bg); color: var(--text-primary);
-            display: flex; align-items: center; gap: 12px;
-            transition: all 0.2s;
+            display: flex; align-items: center; gap: 12px; transition: all 0.2s;
         }
-        .menu-btn:hover { border-color: var(--accent-yellow); background: var(--card-bg); }
-        .menu-btn.primary { background: var(--accent-yellow); color: var(--text-on-accent); border-color: var(--accent-yellow); font-weight: 700; }
-        .menu-btn.primary:hover { background: var(--accent-yellow-dark); border-color: var(--accent-yellow-dark); }
-        .menu-btn i { width: 20px; text-align: center; }
+        .menu-btn:hover { border-color: var(--accent); background: var(--card-bg); transform: translateY(-2px); }
+        .menu-btn.primary { background: var(--accent); color: white; border-color: var(--accent); font-weight: 700; }
+        .menu-btn.primary:hover { background-color: var(--accent); border-color: var(--accent); }
+        .menu-btn i { width: 20px; text-align: center; color: var(--text-secondary); }
+        .menu-btn:hover i { color: var(--accent); }
+        .menu-btn.primary i { color: white; }
 
-        .top-settings { display: flex; justify-content: flex-end; }
+        .top-settings { display: flex; justify-content: space-between; align-items: center; }
         .theme-toggle {
             background: var(--card-bg); border: 2px solid var(--border); color: var(--text-secondary);
             font-size: 1rem; cursor: pointer; border-radius: 50%; width: 40px; height: 40px;
         }
         .theme-toggle:hover { color: var(--text-primary); border-color: var(--text-primary); }
+        .progress-pill {
+            background: var(--card-bg); padding: 6px 14px; border-radius: 20px; 
+            font-size: 0.9rem; font-weight: 600; border: 1px solid var(--border);
+            color: var(--text-secondary);
+        }
 
         /* --- ЭКРАН ТЕСТА --- */
-        .quiz-header { display: flex; align-items: center; gap: 12px; margin-bottom: 25px; }
-        .progress-bar { flex: 1; height: 12px; background: var(--border); border-radius: 6px; overflow: hidden; }
-        .progress-fill { width: 0%; height: 100%; background: var(--accent-yellow); transition: width 0.3s; }
-        .progress-text { font-weight: 500; font-size: 0.9rem; color: var(--text-secondary); }
-
-        .question-card { animation: slideIn 0.3s ease-out; }
+        .quiz-card {
+            background: var(--card-bg); border-radius: 20px; box-shadow: var(--shadow);
+            padding: 25px; width: 100%; border: 1px solid var(--border); margin-top: 20px;
+        }
         .q-id { font-size: 0.9rem; font-weight: 700; color: var(--text-secondary); margin-bottom: 8px; }
         .q-title { font-size: 1.5rem; font-weight: 700; line-height: 1.4; margin-bottom: 30px; color: var(--text-primary); }
         
         .options-list { display: flex; flex-direction: column; gap: 12px; }
         .option {
-            background: var(--card-bg);
-            border: 2px solid var(--border);
-            padding: 16px;
-            border-radius: 12px;
-            cursor: pointer;
-            font-size: 1rem;
-            font-weight: 500;
-            line-height: 1.4;
-            transition: all 0.2s;
-            display: flex;
-            align-items: center;
-            gap: 15px;
+            background: var(--bg);
+            border: 2px solid var(--bg);
+            padding: 16px; border-radius: 12px; cursor: pointer;
+            font-size: 1rem; font-weight: 500; line-height: 1.4;
+            transition: all 0.2s; display: flex; align-items: center; gap: 15px;
         }
-        .option:hover:not(.disabled) { border-color: var(--accent-yellow-dark); }
+        .option:hover:not(.disabled) { border-color: var(--accent); }
         
         .option-marker {
-            width: 24px; height: 24px; border-radius: 6px; border: 2px solid var(--border);
+            width: 24px; height: 24px; border-radius: 50%; border: 2px solid var(--border);
             flex-shrink: 0; display: flex; align-items: center; justify-content: center;
-            transition: 0.2s;
+            transition: 0.2s; position: relative;
         }
-        .option-marker-icon { font-size: 14px; color: var(--text-on-accent); opacity: 0; }
-        
-        /* Выбрано, но не проверено */
-        .option.selected:not(.disabled) { border-color: var(--accent-yellow); background: var(--accent-yellow); }
-        .option.selected:not(.disabled) .option-marker { border-color: var(--accent-yellow-dark); background-color: var(--text-on-accent); }
-        .option.selected:not(.disabled) .option-marker-icon { opacity: 1; }
-        .option.selected:not(.disabled) .option-text { color: var(--text-on-accent); }
+        .option-marker i { font-size: 12px; color: white; opacity: 0; transition: 0.2s; }
+
+        /* Выбрано */
+        .option.selected:not(.disabled) { border-color: var(--accent); background: var(--accent-light); }
+        .option.selected:not(.disabled) .option-marker { background: var(--accent); border-color: var(--accent); }
+        .option.selected:not(.disabled) .option-marker i { opacity: 1; }
 
         /* Проверено */
         .option.correct { background: var(--success-light); border-color: var(--success); }
         .option.correct .option-marker { background: var(--success); border-color: var(--success); }
-        .option.correct .option-marker-icon { color: white; opacity: 1; }
-        .option.correct .option-marker-icon::after { content: '✓'; }
+        .option.correct .option-marker i { opacity: 1; content: '\f00c'; /* Check */ }
         
         .option.incorrect { background: var(--error-light); border-color: var(--error); }
         .option.incorrect .option-marker { background: var(--error); border-color: var(--error); }
-        .option.incorrect .option-marker-icon { color: white; opacity: 1; }
-        .option.incorrect .option-marker-icon::after { content: '✕'; }
+        .option.incorrect .option-marker i { opacity: 1; content: '\f00d'; /* Cross */ }
 
         .option.missed { border: 2px dashed var(--success); background: var(--success-light); opacity: 0.8; }
         .option.disabled { cursor: default; }
 
-        /* --- ФУТЕР (КНОПКА ПРОВЕРКИ) --- */
+        /* --- ФУТЕР --- */
         .quiz-footer {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            padding: 20px;
-            background: var(--card-bg);
-            border-top: 2px solid var(--border);
-            z-index: 10;
+            position: fixed; bottom: 0; left: 0; right: 0; padding: 20px;
+            background: linear-gradient(180deg, rgba(255,255,255,0) 0%, var(--card-bg) 30%);
+            border-top: 1px solid var(--border);
         }
-        .quiz-footer .container { padding: 0; }
-        .check-btn {
-            width: 100%; padding: 16px; border: none; border-radius: 12px;
-            font-size: 1.1rem; font-weight: 700; cursor: pointer; color: var(--text-on-accent);
-            background: var(--accent-yellow);
-            transition: all 0.2s;
-        }
-        .check-btn:disabled { background: var(--border); color: var(--text-secondary); cursor: not-allowed; }
-        .check-btn.correct { background: var(--success); color: white; }
-        .check-btn.incorrect { background: var(--error); color: white; }
+        [data-theme="dark"] .quiz-footer { background: linear-gradient(180deg, rgba(0,0,0,0) 0%, var(--card-bg) 30%); }
 
-        /* --- ЭКРАН РЕЗУЛЬТАТОВ --- */
-        .result-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; width: 100%; margin: 30px 0; }
-        .stat-box { background: var(--bg-color); border: 2px solid var(--border); padding: 15px; border-radius: 12px; text-align: center; }
+        .quiz-footer .container { padding: 0; }
+        .controls { display: grid; grid-template-columns: 60px 1fr 60px; gap: 15px; }
+        .nav-btn {
+            height: 50px; border-radius: 12px; border: 1px solid var(--border);
+            cursor: pointer; font-size: 1.2rem; display: flex; align-items: center; justify-content: center;
+            background: var(--card-bg); color: var(--text-primary);
+        }
+        .nav-btn:hover:not(:disabled) { background: var(--bg); border-color: var(--accent); }
+        .nav-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+        
+        .action-btn {
+            height: 50px; border-radius: 12px; border: none; cursor: pointer;
+            font-weight: 700; font-size: 1rem; color: white;
+            background: var(--accent);
+        }
+        .action-btn:disabled { background: var(--text-secondary); }
+        .action-btn.correct { background: var(--success); }
+        .action-btn.incorrect { background: var(--error); }
+
+        /* --- РЕЗУЛЬТАТЫ --- */
+        .stat-box { background: var(--bg); border: 1px solid var(--border); padding: 15px; border-radius: 12px; text-align: center; }
         .stat-val { font-size: 1.8rem; font-weight: 700; }
         .stat-label { font-size: 0.9rem; color: var(--text-secondary); }
         .stat-val.correct { color: var(--success); }
@@ -175,19 +156,14 @@
 
         /* --- ИКОНКА TG --- */
         .tg-fab {
-            position: fixed;
-            bottom: 110px; /* Выше футера */
-            right: 20px;
-            width: 50px; height: 50px; background: var(--tg-color);
+            position: fixed; bottom: 110px; right: 20px; width: 50px; height: 50px; background: var(--tg-color);
             border-radius: 50%; display: flex; align-items: center; justify-content: center;
             color: white; font-size: 24px; box-shadow: 0 5px 20px rgba(36, 129, 204, 0.4);
             z-index: 100; text-decoration: none; transition: transform 0.3s;
         }
         .tg-fab:hover { transform: scale(1.1); }
         
-        /* --- АНИМАЦИИ --- */
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        @keyframes slideIn { from { opacity: 0; transform: translateX(20px); } to { opacity: 1; transform: translateX(0); } }
     </style>
 </head>
 <body>
@@ -196,13 +172,14 @@
 
         <div id="start-screen" class="screen active">
             <div class="top-settings">
+                <span></span>
                 <button class="theme-toggle" onclick="toggleTheme()" id="theme-toggle-btn">
-                    <i class="fas fa-moon"></i>
+                    <i class="fas fa-gear"></i>
                 </button>
             </div>
             <div class="start-header">
-                <h1>Тренажер по Физиологии</h1>
-                <p>Вопросы 902–992<br>Анатомия, Слюноотделение, Желудок</p>
+                <h1>Тренажер (PRO)</h1>
+                <p>Тест-драйв 5 вопросов (902-906).<br>Все функции включены.</p>
             </div>
             
             <div class="start-controls">
@@ -212,7 +189,7 @@
                     </button>
                 </div>
                 <button class="menu-btn" onclick="startQuiz('new')">
-                    <i class="fas fa-redo"></i> &nbsp; Начать заново (по порядку)
+                    <i class="fas fa-redo"></i> &nbsp; Начать заново
                 </button>
                 <button class="menu-btn" onclick="startQuiz('shuffle')">
                     <i class="fas fa-random"></i> &nbsp; Случайный порядок
@@ -221,26 +198,26 @@
         </div>
 
         <div id="quiz-screen" class="screen">
-            <div class="quiz-header">
-                <div class="progress-text" id="progress-text">1 / 5</div>
-                <div class="progress-bar">
-                    <div class="progress-fill" id="progress-fill"></div>
-                </div>
+            <div class="top-settings" style="margin-bottom: 20px;">
+                <div class="progress-pill" id="progress-pill">1 / 5</div>
+                <button class="theme-toggle" onclick="toggleTheme()" id="theme-toggle-btn-quiz">
+                    <i class="fas fa-gear"></i>
+                </button>
             </div>
 
-            <div class="question-card" id="question-card">
+            <div class="quiz-card" id="question-card">
                 <div class="q-id" id="q-id-display">#902</div>
                 <div class="q-title" id="q-text">Загрузка...</div>
                 <div class="options-list" id="options-list"></div>
             </div>
-            </div>
+        </div>
 
         <div id="result-screen" class="screen">
-            <div class="start-header" style="margin:0;">
+             <div class="start-header">
                 <h1 id="result-title">Тест завершен!</h1>
                 <p id="result-subtitle" style="font-size: 1.5rem; font-weight: 700; color: var(--text-primary);">Ваш результат: <span id="final-score">0%</span></p>
             </div>
-            <div class="result-stats">
+            <div class="result-stats" style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; width: 100%; margin: 30px 0;">
                 <div class="stat-box">
                     <div class="stat-val correct" id="correct-val">0</div>
                     <div class="stat-label">Верно</div>
@@ -262,10 +239,12 @@
     </div>
 
     <div class="quiz-footer" id="quiz-footer" style="display: none;">
-        <div class="container">
-            <button class="check-btn" id="check-btn" onclick="handleMainClick()" disabled>
-                Проверить
-            </button>
+        <div class="container" style="padding-bottom: 0;">
+             <div class="controls">
+                <button class="nav-btn" id="prev-btn" onclick="prevQ()"><i class="fas fa-chevron-left"></i></button>
+                <button class="action-btn" id="main-btn" onclick="handleMainClick()">Ответить</button>
+                <button class="nav-btn" id="next-btn" onclick="nextQ()"><i class="fas fa-chevron-right"></i></button>
+            </div>
         </div>
     </div>
     
@@ -274,7 +253,7 @@
     </a>
 
     <script>
-        // --- БАЗА ДАННЫХ ВОПРОСОВ (ДЕМКА, 902-906) ---
+        // --- ДЕМО-БАЗА ВОПРОСОВ (902-906) ---
         const fullQuizData = [
             {id:902,q:"Укажите особенности, характерные для полого органа:",opts:["имеет строму и паренхиму","имеет паренхиму и дольчатое строение","имеет внутреннюю полость и 3-х слойную стенку","имеет строму и внутреннюю полость"],correct:[2]},
             {id:903,q:"Укажите особенности, характерные для паренхиматозного органа:",opts:["имеет внутреннюю полость и 3-х слойную стенку","имеет паренхиму и дольчатое строение","имеет строму и паренхиму","имеет строму и внутреннюю полость"],correct:[1,2]},
@@ -286,9 +265,9 @@
         // --- ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ---
         let activeQuestions = [];
         let currentIndex = 0;
-        let userAnswers = {}; // { "902": { selected: Set, isSubmitted: bool, isCorrect: bool }, ... }
+        let userAnswers = {};
         let currentMode = 'default';
-        const storageKey = 'physio_quiz_progress_v6_yandex'; // Новая версия
+        const storageKey = 'physio_quiz_progress_v7_pro';
 
         // --- DOM ЭЛЕМЕНТЫ ---
         const screens = {
@@ -302,11 +281,12 @@
         const qIdEl = document.getElementById('q-id-display');
         const qTextEl = document.getElementById('q-text');
         const optionsList = document.getElementById('options-list');
-        const mainBtn = document.getElementById('check-btn');
-        const themeToggleBtn = document.getElementById('theme-toggle-btn');
+        const mainBtn = document.getElementById('main-btn');
+        const prevBtn = document.getElementById('prev-btn');
+        const nextBtn = document.getElementById('next-btn');
+        const themeToggleBtns = document.querySelectorAll('.theme-toggle');
         const mistakesBtn = document.getElementById('mistakes-btn');
-        const progressFill = document.getElementById('progress-fill');
-        const progressText = document.getElementById('progress-text');
+        const progressPill = document.getElementById('progress-pill');
 
         // --- ИНИЦИАЛИЗАЦИЯ ---
         document.addEventListener('DOMContentLoaded', () => {
@@ -314,28 +294,28 @@
             if (localStorage.getItem(storageKey)) {
                 resumeBtn.style.display = 'block';
             }
+            themeToggleBtns.forEach(btn => btn.onclick = toggleTheme);
         });
 
         // --- ЛОГИКА ТЕМЫ ---
         function toggleTheme() {
             const currentTheme = document.body.getAttribute('data-theme');
-            if (currentTheme === 'dark') {
-                document.body.removeAttribute('data-theme');
-                localStorage.setItem('gi_theme', 'light');
-                themeToggleBtn.innerHTML = '<i class="fas fa-moon"></i>';
-            } else {
-                document.body.setAttribute('data-theme', 'dark');
-                localStorage.setItem('gi_theme', 'dark');
-                themeToggleBtn.innerHTML = '<i class="fas fa-sun"></i>';
-            }
+            const newTheme = (currentTheme === 'dark') ? 'light' : 'dark';
+            document.body.setAttribute('data-theme', newTheme);
+            localStorage.setItem('gi_theme', newTheme);
+            themeToggleBtns.forEach(btn => {
+                btn.innerHTML = (newTheme === 'dark') ? '<i class="fas fa-sun"></i>' : '<i class="fas fa-moon"></i>';
+            });
         }
 
         function loadTheme() {
-            if (localStorage.getItem('gi_theme') === 'dark') {
+            const theme = localStorage.getItem('gi_theme');
+            if (theme === 'dark') {
                 document.body.setAttribute('data-theme', 'dark');
-                themeToggleBtn.innerHTML = '<i class="fas fa-sun"></i>';
+                themeToggleBtns.forEach(btn => btn.innerHTML = '<i class="fas fa-sun"></i>');
             } else {
-                themeToggleBtn.innerHTML = '<i class="fas fa-moon"></i>';
+                document.body.removeAttribute('data-theme');
+                themeToggleBtns.forEach(btn => btn.innerHTML = '<i class="fas fa-moon"></i>');
             }
         }
 
@@ -345,19 +325,19 @@
             
             if (mode === 'resume') {
                 if (!loadProgress()) {
-                    alert("Сохраненные данные не найдены. Начинаем заново.");
+                    alert("Ошибка загрузки. Начинаем заново.");
                     startQuiz('new');
                     return;
                 }
             } else if (mode === 'mistakes') {
                 const mistakeIDs = Object.keys(userAnswers).filter(id => !userAnswers[id].isCorrect);
                 if (mistakeIDs.length === 0) {
-                     alert("Нет ошибок для работы! Поздравляем!");
+                     alert("Нет ошибок для работы!");
                      return;
                 }
                 activeQuestions = fullQuizData.filter(q => mistakeIDs.includes(q.id.toString()));
                 currentIndex = 0;
-                userAnswers = {}; // Сбрасываем ответы для нового прогона
+                userAnswers = {};
             } else { // 'new' or 'shuffle'
                 activeQuestions = JSON.parse(JSON.stringify(fullQuizData)); 
                 if (mode === 'shuffle') {
@@ -378,7 +358,7 @@
         }
         
         // --- ЛОГИКА РЕНДЕРА ВОПРОСА ---
-        function renderQuestion(isFirstLoad = false) {
+        function renderQuestion(isFirstLoad = false, direction = 'right') {
             const q = activeQuestions[currentIndex];
             if (!q) return;
 
@@ -387,33 +367,42 @@
             }
             const state = userAnswers[q.id];
 
-            // Обновляем текст
-            progressText.textContent = `${currentIndex + 1} / ${activeQuestions.length}`;
-            progressFill.style.width = `${((currentIndex + 1) / activeQuestions.length) * 100}%`;
+            progressPill.textContent = `${currentIndex + 1} / ${activeQuestions.length}`;
             qIdEl.textContent = `#${q.id}`;
             qTextEl.textContent = q.q;
 
-            // Анимация
             cardContainer.style.animation = 'none';
             if (!isFirstLoad) {
-                void cardContainer.offsetWidth; // Force reflow
-                cardContainer.style.animation = 'slideIn 0.3s ease-out';
+                void cardContainer.offsetWidth; 
+                cardContainer.style.animation = `fadeIn 0.3s ease-out`;
             }
 
-            // Рендер опций
             optionsList.innerHTML = '';
             q.opts.forEach((optText, idx) => {
                 const div = document.createElement('div');
                 div.className = 'option';
-                div.innerHTML = `<div class="option-marker"><i class="option-marker-icon"></i></div><div class="option-text">${optText}</div>`;
+                div.innerHTML = `<div class="option-marker"><i class="fas"></i></div><div class="option-text">${optText}</div>`;
+
+                const markerIcon = div.querySelector('.option-marker i');
 
                 if (state.isSubmitted) {
                     div.classList.add('disabled');
-                    if (q.correct.includes(idx)) div.classList.add('correct');
-                    else if (state.selected.has(idx)) div.classList.add('incorrect');
-                    if (q.correct.includes(idx) && !state.selected.has(idx)) div.classList.add('missed');
+                    if (q.correct.includes(idx)) {
+                        div.classList.add('correct');
+                        markerIcon.classList.add('fa-check');
+                    }
+                    else if (state.selected.has(idx)) {
+                        div.classList.add('incorrect');
+                        markerIcon.classList.add('fa-times');
+                    }
+                    if (q.correct.includes(idx) && !state.selected.has(idx)) {
+                        div.classList.add('missed');
+                    }
                 } else {
-                    if (state.selected.has(idx)) div.classList.add('selected');
+                    if (state.selected.has(idx)) {
+                        div.classList.add('selected');
+                        markerIcon.classList.add('fa-check');
+                    }
                     div.onclick = () => toggleOption(q.id, idx);
                 }
                 optionsList.appendChild(div);
@@ -431,7 +420,10 @@
             
             const options = document.querySelectorAll('.option');
             options.forEach((opt, i) => {
-                if (i === idx) opt.classList.toggle('selected');
+                if (i === idx) {
+                    opt.classList.toggle('selected');
+                    opt.querySelector('.option-marker i').classList.toggle('fa-check', state.selected.has(idx));
+                }
             });
             
             updateFooter(state);
@@ -439,16 +431,23 @@
 
         // --- ЛОГИКА ФУТЕРА/КНОПОК ---
         function updateFooter(state) {
+            prevBtn.disabled = (currentIndex === 0);
+            nextBtn.disabled = (currentIndex === activeQuestions.length - 1);
+            
             if (state.isSubmitted) {
-                mainBtn.textContent = (currentIndex === activeQuestions.length - 1) ? "Завершить" : "Далее";
+                mainBtn.textContent = "Далее";
                 mainBtn.disabled = false;
-                mainBtn.className = 'check-btn'; // Сброс цвета
+                mainBtn.className = 'action-btn';
                 if(state.isCorrect) mainBtn.classList.add('correct');
                 else mainBtn.classList.add('incorrect');
+                
+                if (currentIndex === activeQuestions.length - 1) {
+                    mainBtn.textContent = "Завершить";
+                }
             } else {
-                mainBtn.textContent = "Проверить";
+                mainBtn.textContent = "Ответить";
                 mainBtn.disabled = (state.selected.size === 0);
-                mainBtn.className = 'check-btn'; // Сброс цвета
+                mainBtn.className = 'action-btn';
             }
         }
         
@@ -456,15 +455,12 @@
             const state = userAnswers[activeQuestions[currentIndex].id];
 
             if (state.isSubmitted) {
-                // Это кнопка "Далее" или "Завершить"
                 if (currentIndex < activeQuestions.length - 1) {
-                    currentIndex++;
-                    renderQuestion();
+                    nextQ();
                 } else {
                     finishQuiz();
                 }
             } else {
-                // Это кнопка "Проверить"
                 checkAnswer();
             }
         }
@@ -482,7 +478,21 @@
             
             if (currentMode !== 'mistakes') saveProgress();
             
-            renderQuestion(false); // Перерисовать с цветами
+            renderQuestion(false);
+        }
+
+        function nextQ() {
+            if (currentIndex < activeQuestions.length - 1) {
+                currentIndex++;
+                renderQuestion(false, 'right');
+            }
+        }
+
+        function prevQ() {
+            if (currentIndex > 0) {
+                currentIndex--;
+                renderQuestion(false, 'left');
+            }
         }
 
         // --- РЕЗУЛЬТАТЫ И СОХРАНЕНИЕ ---
@@ -501,21 +511,11 @@
             document.getElementById('correct-val').textContent = correctCount;
             document.getElementById('error-val').textContent = total - correctCount;
 
-            const icon = document.getElementById('result-icon');
             const title = document.getElementById('result-title');
-            if (percent === 100) {
-                icon.textContent = "🏆";
-                title.textContent = "Идеально!";
-            } else if (percent >= 80) {
-                icon.textContent = "🎉";
-                title.textContent = "Отлично!";
-            } else if (percent >= 50) {
-                icon.textContent = "👍";
-                title.textContent = "Неплохо!";
-            } else {
-                icon.textContent = "🧠";
-                title.textContent = "Стоит повторить";
-            }
+            if (percent === 100) title.textContent = "Идеально!";
+            else if (percent >= 80) title.textContent = "Отлично!";
+            else if (percent >= 50) title.textContent = "Неплохо!";
+            else title.textContent = "Стоит повторить";
 
             if (correctCount < total && currentMode !== 'mistakes') {
                 mistakesBtn.style.display = 'flex';
@@ -587,6 +587,8 @@
         // --- УПРАВЛЕНИЕ С КЛАВИАТУРЫ ---
         document.addEventListener('keydown', (e) => {
             if (screens.quiz.classList.contains('active')) {
+                if (e.key === 'ArrowRight') nextBtn.click();
+                if (e.key === 'ArrowLeft') prevBtn.click();
                 if (e.key === 'Enter') mainBtn.click();
             }
         });
