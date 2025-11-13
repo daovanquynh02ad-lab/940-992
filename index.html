@@ -3,160 +3,417 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Тренажер (Neon Демо)</title>
+    <title>Тренажер по Физиологии (PRO)</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@500&family=Inter:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800&display=swap" rel="stylesheet">
     
     <style>
         :root {
-            --bg: #121212;
-            --card-bg: #1E1E1E;
-            --text-primary: #EAEAEA;
-            --text-secondary: #A0A0A0;
-            --accent: #1DB954; /* Spotify Green */
-            --accent-hover: #1ED760;
-            --success: #1DB954;
-            --error: #F44336;
-            --border: #2D2D2D;
-            --font-main: 'Inter', sans-serif;
-            --font-code: 'Roboto Mono', monospace;
+            --bg: #F9F9F9;
+            --card-bg: #FFFFFF;
+            --text-primary: #111111;
+            --text-secondary: #555555;
+            --accent: #5E5CE6; /* Apple Purple */
+            --accent-light: #F5F5FF;
+            --success: #34C759;
+            --success-light: #F0FFF4;
+            --error: #FF3B30;
+            --error-light: #FFF0F0;
+            --border: #E5E5E5;
+            --shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.07), 0 4px 6px -2px rgba(0, 0, 0, 0.03);
+            --font: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             --tg-color: #2481cc;
         }
 
-        /* Светлая тема (если вдруг понадобится) */
-        [data-theme="light"] {
-            --bg: #FFFFFF;
-            --card-bg: #F9F9F9;
-            --text-primary: #121212;
-            --text-secondary: #555555;
-            --accent: #1DB954;
-            --accent-hover: #1DB954;
-            --border: #E5E5E5;
+        [data-theme="dark"] {
+            --bg: #000000;
+            --card-bg: #1C1C1E;
+            --text-primary: #FFFFFF;
+            --text-secondary: #8D8D93;
+            --accent: #6C63FF; /* Ярче на темном */
+            --accent-light: #2C2C2E;
+            --success: #30D158;
+            --success-light: #2C2C2E;
+            --error: #FF453A;
+            --error-light: #2C2C2E;
+            --border: #3A3A3C;
+            --shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        html, body { font-family: var(--font-main); background-color: var(--bg); color: var(--text-primary); min-height: 100vh; }
-
-        .container { max-width: 640px; width: 100%; margin: 0 auto; padding: 20px 20px 140px 20px; }
-        .screen { display: none; flex-direction: column; width: 100%; flex: 1; animation: fadeIn 0.3s; }
-        .screen.active { display: flex; }
         
-        /* --- СТАРТ --- */
-        .start-header { margin: 40px 0; text-align: center; }
-        .start-header h1 { font-family: var(--font-code); font-size: 2.2rem; color: var(--accent); margin-bottom: 10px; }
-        .start-header p { font-size: 1.1rem; color: var(--text-secondary); line-height: 1.6; }
-        
-        .start-controls { display: flex; flex-direction: column; gap: 12px; }
-        .menu-btn {
-            padding: 16px; border: 2px solid var(--border); border-radius: 8px; font-size: 1rem; font-weight: 700; cursor: pointer;
-            background: var(--card-bg); color: var(--text-primary); text-align: left;
-            display: flex; align-items: center; gap: 12px; transition: all 0.2s;
+        html, body {
+            font-family: var(--font);
+            background-color: var(--bg);
+            color: var(--text-primary);
+            min-height: 100vh;
         }
-        .menu-btn:hover { border-color: var(--accent); color: var(--accent); }
-        .menu-btn.primary { background: var(--accent); color: var(--bg); border-color: var(--accent); }
-        .menu-btn.primary:hover { background: var(--accent-hover); border-color: var(--accent-hover); }
-        .menu-btn i { width: 20px; text-align: center; color: var(--text-secondary); }
-        .menu-btn:hover i { color: var(--accent); }
-        .menu-btn.primary i { color: var(--bg); }
 
-        .top-settings { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-        .theme-toggle { background: none; border: none; color: var(--text-secondary); font-size: 1.2rem; cursor: pointer; }
-        .progress-text { font-family: var(--font-code); font-weight: 500; font-size: 1rem; color: var(--text-secondary); }
+        .container {
+            max-width: 640px;
+            width: 100%;
+            margin: 0 auto;
+            padding: 20px 20px 140px 20px; /* Отступ для плавающего футера */
+        }
 
-        /* --- ТЕСТ --- */
-        .q-id { font-family: var(--font-code); font-size: 0.9rem; font-weight: 500; color: var(--accent); margin-bottom: 8px; }
-        .q-title { font-size: 1.5rem; font-weight: 700; line-height: 1.4; margin-bottom: 30px; color: var(--text-primary); }
+        /* --- ЭКРАНЫ --- */
+        .screen {
+            display: none;
+            flex-direction: column;
+            width: 100%;
+            flex: 1;
+            animation: fadeIn 0.3s ease-out;
+        }
+        .screen.active {
+            display: flex;
+        }
         
-        .options-list { display: flex; flex-direction: column; gap: 12px; }
-        .option {
+        /* --- СТАРТОВЫЙ ЭКРАН --- */
+        .start-header {
+            margin: 40px 0;
+            text-align: center;
+        }
+        .start-header h1 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: var(--text-primary);
+            margin-bottom: 10px;
+        }
+        .start-header p {
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+        
+        .start-controls {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .menu-btn {
+            padding: 16px;
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            background: var(--card-bg);
+            color: var(--text-primary);
+            text-align: left;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transition: all 0.2s;
+        }
+        .menu-btn:hover {
+            border-color: var(--accent);
+            background: var(--card-bg);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow);
+        }
+        .menu-btn.primary {
+            background: var(--accent);
+            color: white;
+            border-color: var(--accent);
+            font-weight: 700;
+        }
+        .menu-btn.primary:hover {
+            background-color: var(--accent);
+            border-color: var(--accent);
+        }
+        .menu-btn i {
+            width: 20px;
+            text-align: center;
+            color: var(--text-secondary);
+        }
+        .menu-btn:hover i { color: var(--accent); }
+        .menu-btn.primary i { color: white; }
+
+        .top-settings {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .theme-toggle {
             background: var(--card-bg);
             border: 2px solid var(--border);
-            padding: 16px; border-radius: 8px; cursor: pointer;
-            font-size: 1rem; font-weight: 500; line-height: 1.4;
-            transition: all 0.2s; display: flex; align-items: center; gap: 15px;
+            color: var(--text-secondary);
+            font-size: 1rem;
+            cursor: pointer;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
-        .option:hover:not(.disabled) { border-color: var(--accent); }
+        .theme-toggle:hover {
+            color: var(--text-primary);
+            border-color: var(--text-primary);
+        }
+        .progress-pill {
+            background: var(--card-bg);
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            border: 1px solid var(--border);
+            color: var(--text-secondary);
+        }
+
+        /* --- ЭКРАН ТЕСТА --- */
+        .quiz-card {
+            background: var(--card-bg);
+            border-radius: 20px;
+            box-shadow: var(--shadow);
+            padding: 25px;
+            width: 100%;
+            border: 1px solid var(--border);
+            margin-top: 20px;
+        }
+        .q-id {
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+        }
+        .q-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            line-height: 1.4;
+            margin-bottom: 30px;
+            color: var(--text-primary);
+        }
+        
+        .options-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .option {
+            background: var(--bg);
+            border: 2px solid var(--bg);
+            padding: 16px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 500;
+            line-height: 1.4;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        .option:hover:not(.disabled) {
+            border-color: var(--accent);
+        }
         
         .option-marker {
-            width: 24px; height: 24px; border-radius: 50%; border: 2px solid var(--border);
-            flex-shrink: 0; display: flex; align-items: center; justify-content: center;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%; /* Круглые маркеры */
+            border: 2px solid var(--border);
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: 0.2s;
+            position: relative;
+        }
+        .option-marker i {
+            font-size: 12px;
+            color: white;
+            opacity: 0;
             transition: 0.2s;
         }
-        
-        /* Состояния */
-        .option.selected:not(.disabled) { border-color: var(--accent); }
-        .option.selected:not(.disabled) .option-marker { background: var(--accent); border-color: var(--accent); }
 
-        .option.correct { border-color: var(--success); }
-        .option.correct .option-marker { background: var(--success); border-color: var(--success); }
-        
-        .option.incorrect { border-color: var(--error); }
-        .option.incorrect .option-marker { background: var(--error); border-color: var(--error); }
-        
-        .option.missed { border: 2px dashed var(--success); opacity: 0.7; }
-        .option.disabled { cursor: default; opacity: 0.6; }
-        .option.disabled:not(.correct):not(.incorrect) { opacity: 0.4; }
+        /* Выбрано */
+        .option.selected:not(.disabled) {
+            border-color: var(--accent);
+            background: var(--accent-light);
+        }
+        .option.selected:not(.disabled) .option-marker {
+            background: var(--accent);
+            border-color: var(--accent);
+        }
+        .option.selected:not(.disabled) .option-marker i {
+            opacity: 1;
+            /* \f00c это FontAwesome "галочка" */
+            content: '\f00c'; 
+            font-family: "Font Awesome 6 Free";
+            font-weight: 900;
+        }
 
+        /* Проверено */
+        .option.correct {
+            background: var(--success-light);
+            border-color: var(--success);
+            color: var(--text-primary);
+        }
+        .option.correct .option-marker {
+            background: var(--success);
+            border-color: var(--success);
+        }
+        .option.correct .option-marker i {
+            opacity: 1;
+            content: '\f00c';
+            font-family: "Font Awesome 6 Free";
+            font-weight: 900;
+        }
+        
+        .option.incorrect {
+            background: var(--error-light);
+            border-color: var(--error);
+            color: var(--text-primary);
+        }
+        .option.incorrect .option-marker {
+            background: var(--error);
+            border-color: var(--error);
+        }
+        .option.incorrect .option-marker i {
+            opacity: 1;
+             /* \f00d это FontAwesome "крестик" */
+            content: '\f00d';
+            font-family: "Font Awesome 6 Free";
+            font-weight: 900;
+        }
+
+        .option.missed {
+            border: 2px dashed var(--success);
+            background: var(--success-light);
+            opacity: 0.8;
+        }
+        .option.disabled {
+            cursor: default;
+        }
 
         /* --- ФУТЕР --- */
         .quiz-footer {
-            position: fixed; bottom: 0; left: 0; right: 0; padding: 20px;
-            background: var(--card-bg); border-top: 1px solid var(--border);
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 20px;
+            /* Плавающий эффект */
+            background: linear-gradient(180deg, rgba(255,255,255,0) 0%, var(--card-bg) 30%);
+            border-top: 1px solid var(--border);
         }
+        [data-theme="dark"] .quiz-footer {
+            background: linear-gradient(180deg, rgba(0,0,0,0) 0%, var(--card-bg) 30%);
+        }
+
         .quiz-footer .container { padding: 0; }
-        .controls { display: grid; grid-template-columns: 1fr 2fr 1fr; gap: 15px; }
-        .nav-btn {
-            height: 50px; border-radius: 25px; border: 2px solid var(--border);
-            cursor: pointer; font-size: 1.2rem;
-            display: flex; align-items: center; justify-content: center;
-            background: var(--card-bg); color: var(--text-primary);
+        .controls {
+            display: grid;
+            grid-template-columns: 60px 1fr 60px;
+            gap: 15px;
         }
-        .nav-btn:hover:not(:disabled) { border-color: var(--text-primary); }
-        .nav-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+        .nav-btn {
+            height: 50px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            cursor: pointer;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--card-bg);
+            color: var(--text-primary);
+            box-shadow: var(--shadow);
+        }
+        .nav-btn:hover:not(:disabled) {
+            background: var(--bg);
+            border-color: var(--accent);
+        }
+        .nav-btn:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+            box-shadow: none;
+        }
         
         .action-btn {
-            height: 50px; border-radius: 25px; border: none; cursor: pointer;
-            font-weight: 700; font-size: 1rem; color: var(--bg);
+            height: 50px;
+            border-radius: 12px;
+            border: none;
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 1rem;
+            color: white;
             background: var(--accent);
+            box-shadow: var(--shadow);
         }
-        .action-btn:hover:not(:disabled) { background: var(--accent-hover); }
-        .action-btn:disabled { background: var(--text-secondary); color: var(--bg); }
+        .action-btn:disabled {
+            background: var(--text-secondary);
+            box-shadow: none;
+            opacity: 0.5;
+        }
         .action-btn.correct { background: var(--success); }
         .action-btn.incorrect { background: var(--error); }
+        .action-btn:active:not(:disabled) { transform: scale(0.98); }
 
         /* --- РЕЗУЛЬТАТЫ --- */
-        .stat-box { padding: 15px 0; border-bottom: 1px solid var(--border); text-align: center; }
-        .stat-val { font-size: 1.8rem; font-weight: 700; }
-        .stat-label { font-size: 0.9rem; color: var(--text-secondary); }
+        .stat-box {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            padding: 15px;
+            border-radius: 12px;
+            text-align: center;
+            box-shadow: var(--shadow);
+        }
+        .stat-val {
+            font-size: 1.8rem;
+            font-weight: 700;
+        }
+        .stat-label {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
         .stat-val.correct { color: var(--success); }
         .stat-val.error { color: var(--error); }
-        
+
         /* --- ИКОНКА TG --- */
         .tg-fab {
-            position: fixed; bottom: 90px; right: 20px; width: 50px; height: 50px; background: var(--tg-color);
-            border-radius: 50%; display: flex; align-items: center; justify-content: center;
-            color: white; font-size: 24px; box-shadow: 0 5px 20px rgba(36, 129, 204, 0.4);
-            z-index: 100; text-decoration: none; transition: transform 0.3s;
+            position: fixed;
+            bottom: 110px; /* Выше футера */
+            right: 20px;
+            width: 50px;
+            height: 50px;
+            background: var(--tg-color);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 24px;
+            box-shadow: 0 5px 20px rgba(36, 129, 204, 0.4);
+            z-index: 100;
+            text-decoration: none;
+            transition: transform 0.3s;
         }
         .tg-fab:hover { transform: scale(1.1); }
         
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
     </style>
 </head>
-<body data-theme="dark"> <div class="container">
+<body>
+
+    <div class="container">
 
         <div id="start-screen" class="screen active">
-            <div class="top-settings" style="margin-bottom: 0;">
+            <div class="top-settings">
                 <span></span>
                 <button class="theme-toggle" onclick="toggleTheme()" id="theme-toggle-btn-start">
-                    <i class="fas fa-sun"></i>
+                    <i class="fas fa-gear"></i>
                 </button>
             </div>
             <div class="start-header">
-                <h1>Тренажер (NEON)</h1>
-                <p>Тест-драйв 5 вопросов (902-906).<br>Все функции включены.</p>
+                <h1>Тренажер (PRO)</h1>
+                <p>91 вопрос (902-992)<br>Все функции включены.</p>
             </div>
             
             <div class="start-controls">
@@ -175,24 +432,34 @@
         </div>
 
         <div id="quiz-screen" class="screen">
-            <div class="top-settings">
-                 <div class="progress-text" id="progress-text">1 / 5</div>
+            <div class="top-settings" style="margin-bottom: 20px;">
+                <div class="progress-pill" id="progress-pill">1 / 91</div>
                 <button class="theme-toggle" onclick="toggleTheme()" id="theme-toggle-btn-quiz">
-                    <i class="fas fa-sun"></i>
+                    <i class="fas fa-gear"></i>
                 </button>
             </div>
-            
-            <div class="q-id" id="q-id-display">#902</div>
-            <div class="q-title" id="q-text">Загрузка...</div>
-            <div class="options-list" id="options-list"></div>
+
+            <div class="quiz-card" id="question-card">
+                <div class="q-id" id="q-id-display">#902</div>
+                <div class="q-title" id="q-text">Загрузка...</div>
+                <div class="options-list" id="options-list"></div>
+            </div>
         </div>
 
         <div id="result-screen" class="screen">
-            <div class="start-header" style="margin:0;">
+             <div class="start-header" style="margin:0;">
                 <h1 id="result-title">Тест завершен!</h1>
-                <p class="stat-box"><span class="stat-val" id="final-score">0%</span><br><span class="stat-label">Результат</span></p>
-                <p class="stat-box"><span class="stat-val correct" id="correct-val">0</span><br><span class="stat-label">Верно</span></p>
-                <p class="stat-box"><span class="stat-val error" id="error-val">0</span><br><span class="stat-label">Ошибки</span></p>
+                <p id="result-subtitle" style="font-size: 1.5rem; font-weight: 700; color: var(--text-primary); margin-top: 10px;">Результат: <span id="final-score">0%</span></p>
+            </div>
+            <div class="result-stats" style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; width: 100%; margin: 30px 0;">
+                <div class="stat-box">
+                    <div class="stat-val correct" id="correct-val">0</div>
+                    <div class="stat-label">Верно</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-val error" id="error-val">0</div>
+                    <div class="stat-label">Ошибки</div>
+                </div>
             </div>
             <div class="start-controls" style="margin-top: 20px;">
                  <button class="menu-btn primary" id="mistakes-btn" onclick="startQuiz('mistakes')" style="display:none">
@@ -208,9 +475,9 @@
     <div class="quiz-footer" id="quiz-footer" style="display: none;">
         <div class="container" style="padding-bottom: 0;">
              <div class="controls">
-                <button class="nav-btn" id="prev-btn" onclick="prevQ()"><i class="fas fa-arrow-left"></i></button>
+                <button class="nav-btn" id="prev-btn" onclick="prevQ()"><i class="fas fa-chevron-left"></i></button>
                 <button class="action-btn" id="main-btn" onclick="handleMainClick()">Ответить</button>
-                <button class="nav-btn" id="next-btn" onclick="nextQ()"><i class="fas fa-arrow-right"></i></button>
+                <button class="nav-btn" id="next-btn" onclick="nextQ()"><i class="fas fa-chevron-right"></i></button>
             </div>
         </div>
     </div>
@@ -220,20 +487,110 @@
     </a>
 
     <script>
+        // --- БАЗА ДАННЫХ ВОПРОСОВ (902-992) ---
+        // *** ПОЛНЫЙ МАССИВ ИЗ 91 ВОПРОСА ***
         const fullQuizData = [
             {id:902,q:"Укажите особенности, характерные для полого органа:",opts:["имеет строму и паренхиму","имеет паренхиму и дольчатое строение","имеет внутреннюю полость и 3-х слойную стенку","имеет строму и внутреннюю полость"],correct:[2]},
             {id:903,q:"Укажите особенности, характерные для паренхиматозного органа:",opts:["имеет внутреннюю полость и 3-х слойную стенку","имеет паренхиму и дольчатое строение","имеет строму и паренхиму","имеет строму и внутреннюю полость"],correct:[1,2]},
             {id:904,q:"К пищеварительной системе относятся:",opts:["глотка","ротовая полость","желудок","носовая полость","гортань"],correct:[0,1,2]},
             {id:905,q:"К пищеварительной системе относятся:",opts:["тонкая кишка","селезенка","пищевод","гортань"],correct:[0,2]},
-            {id:906,q:"Полость рта ограничена:",opts:["щеками, зубами, зевом, небом","щеками, губами, зевом, диафрагмой рта, небом (твердым и мягким)","щеками, губами, деснами с зубами","деснами с зубами, небом (твердым и мягким), диафрагмой рта"],correct:[1]}
+            {id:906,q:"Полость рта ограничена:",opts:["щеками, зубами, зевом, небом","щеками, губами, зевом, диафрагмой рта, небом (твердым и мягким)","щеками, губами, деснами с зубами","деснами с зубами, небом (твердым и мягким), диафрагмой рта"],correct:[1]},
+            {id:907,q:"Полость рта делится на отделы:",opts:["собственно полость рта и преддверие рта","губы, полость рта и собственно полость рта","щечная область, полость рта и преддверие рта"],correct:[0]},
+            {id:908,q:"Секреторная функция в полости рта осуществляется",opts:["только подъязычной слюнной железой","только поднижнечелюстной слюнной железой","малыми и большими слюнными железами","только околоушной слюнной железой"],correct:[2]},
+            {id:909,q:"Зев состоит из:",opts:["задней стенки глотки","небные дужки и мягкое небо","пустого пространства","небных дужек, мягкого неба, корня языка"],correct:[3]},
+            {id:910,q:"Глотка состоит из:",opts:["3-х частей","2-х частей","4-х частей"],correct:[0]},
+            {id:911,q:"Глотка состоит из:",opts:["ротоглотки, носоглотки, гортани","ротоглотки, гортаноглотки, носоглотки","ротоглотки, гортаноглотки, зева","носоглотки, задней стенки, зева"],correct:[1]},
+            {id:912,q:"Пищевод –",opts:["имеет четыре сужения","паренхиматозный орган","имеет три сужения","полый орган"],correct:[2,3]},
+            {id:913,q:"Мышечная оболочка пищевода состоит из:",opts:["3-х слоев","4-х слоев","2-х слоев","1-го слоя"],correct:[2]},
+            {id:914,q:"Желудок состоит из:",opts:["кардиальной части, дна, тела, привратниковой части","дна, тела, ампулы","дна, тела, шейки"],correct:[0]},
+            {id:915,q:"Стенка желудка состоит из следующих оболочек:",opts:["мышечной","серозной","адвентициальной","слизистой"],correct:[0,1,3]},
+            {id:916,q:"Назовите слои мышечной оболочки желудка:",opts:["круговой","косой","перистый","продольный"],correct:[0,1,3]},
+            {id:917,q:"Депонирующая функция желудка осуществляется его:",opts:["привратниковой частью","дном","телом"],correct:[1]},
+            {id:918,q:"Какими клетками желудочных желез секретируются пепсины?",opts:["париетальными","эндокринными","главными","добавочными"],correct:[2]},
+            {id:919,q:"Какими клетками желудочных желез секретируется соляная кислота?",opts:["мукоцитами","обкладочными","добавочными","главными"],correct:[1]},
+            {id:920,q:"Какими клетками желудочных желез секретируется слизь?",opts:["добавочными","главными","эндокринными","обкладочными"],correct:[0]},
+            {id:921,q:"Поджелудочная железа –",opts:["полый орган","выделяет панкреатический сок","паренхиматозный орган","выделяет желчь"],correct:[1,2]},
+            {id:922,q:"В поджелудочной железе выделяют:",opts:["головку","хвост","ножку","перешеек","тело"],correct:[0,1,4]},
+            {id:923,q:"Печень -",opts:["паренхиматозный орган","полый орган","выделяет панкреатический сок","выделяет желчь"],correct:[0,3]},
+            {id:924,q:"В печени выделяют:",opts:["призматическую и квадратную доли","переднюю и заднюю доли","левую и правую доли","верхнюю и нижнюю доли"],correct:[2]},
+            {id:925,q:"Структурно-функциональной единицей печени является:",opts:["долька","нефрон","ацинус"],correct:[0]},
+            {id:926,q:"В желчном пузыре выделяют:",opts:["хвост","дно","шейку","тело","ножку"],correct:[1,2,3]},
+            {id:927,q:"В состав желчи входят:",opts:["холестерин","желчные кислоты","желчные пигменты","ферменты","холецистокинин"],correct:[0,1,2]},
+            {id:928,q:"Общий желчный проток формируется из:",opts:["протока поджелудочной железы и общего печеночного протока","протока желчного пузыря и протока поджелудочной железы","протока поджелудочной железы и протока желчного пузыря","общего печеночного протока и протока желчного пузыря"],correct:[3]},
+            {id:929,q:"Общий желчный проток впадает в:",opts:["двенадцатиперстную кишку","подвздошную кишку","тощую кишку","желчный пузырь"],correct:[0]},
+            {id:930,q:"Площадь всасывающей поверхности тонкой кишки увеличивается за счет:",opts:["гаустр","полулунных складок","ворсинок"],correct:[2]},
+            {id:931,q:"Тонкая кишка состоит из:",opts:["ампулы и канала","слепой кишки, ободочной кишки, прямой кишки","двенадцатиперстной кишки, тощей кишки, слепой кишки","двенадцатиперстной кишки, тощей кишки, подвздошной кишки"],correct:[3]},
+            {id:932,q:"Поперечно-полосатая мускулатура в пищеварительном тракте встречается в:",opts:["верхней части пищевода","желудке","внутреннем сфинктере прямой кишки","наружном сфинктере прямой кишки","глотке"],correct:[0,3,4]},
+            {id:933,q:"Мышечная оболочка тонкой кишки состоит из:",opts:["3-х слоев мышц","поперечно-полосатой мускулатуры","2-х слоев мышц","гладкой мускулатуры"],correct:[2,3]},
+            {id:934,q:"Укажите слои мышечной оболочки тонкой кишки:",opts:["продольный","косой","круговой"],correct:[0,2]},
+            {id:935,q:"Толстая кишка состоит из:",opts:["двенадцатиперстной кишки, сигмовидной кишки, слепой кишки","двенадцатиперстной кишки, тощей кишки, подвздошной кишки","слепой кишки, ободочной кишки, прямой кишки","тощей кишки, поперечно-ободочной кишки, прямой кишки"],correct:[2]},
+            {id:936,q:"Мышечная оболочка толстой кишки состоит из:",opts:["3-х слоев мышц","2-х слоев мышц","гладкой мускулатуры","поперечно-полосатой мускулатуры"],correct:[1,2]},
+            {id:937,q:"Прямая кишка состоит из:",opts:["сигмовидной кишки, подвздошной кишки","слепой кишки, ободочной кишки","тощей кишки, слепой кишки","ампулы и канала"],correct:[3]},
+            {id:938,q:"Ободочная кишка",opts:["состоит из восходящей, поперечной, нисходящей, слепой кишок","состоит из восходящей, поперечной, нисходящей, сигмовидной кишок","относится к толстой кишке","относится к тонкой кишке"],correct:[1,2]},
+            {id:939,q:"Депонирующая функция прямой кишки осуществляется ее:",opts:["каналом","изгибами","сфинктерами","ампулой"],correct:[3]},
+            {id:940,q:"Органы брюшной полости покрыты:",opts:["серозной оболочкой","сосудистой оболочкой","адвентициальной оболочкой","слизистой оболочкой"],correct:[0]},
+            {id:941,q:"Пищеварительными функциями органов желудочно-кишечного тракта являются:",opts:["инкреторная","секреторная","моторная","экскреторная","всасывательная"],correct:[1,2,4]},
+            {id:942,q:"Основными ферментами слюны являются:",opts:["альфа-амилаза","трипсин","липаза","мальтаза"],correct:[0,3]},
+            {id:943,q:"Перечислите непищеварительные функции слюны:",opts:["экскреторная","ферментативная обработка пищи","участие в артикуляции","защитная"],correct:[0,2,3]},
+            {id:944,q:"Какую слюну вырабатывают околоушные слюнные железы?",opts:["слизистую","серозно-слизистую (смешанную)","серозную (белковую)"],correct:[2]},
+            {id:945,q:"Альфа-амилаза действует на:",opts:["моносахариды","полисахариды","белки","жиры"],correct:[1]},
+            {id:946,q:"Перечислите фазы акта глотания:",opts:["желудочная","пищеводная","глоточная","ротовая"],correct:[1,2,3]},
+            {id:947,q:"Пепсиногены желудочного сока активируются:",opts:["трипсином","желчью","энтерокиназой","соляной кислотой"],correct:[3]},
+            {id:948,q:"Расщепление (гидролиз) углеводов в пищевом комке происходит под влиянием:",opts:["амилазы поджелудочной железы","амилазы желудка","амилазы слюны","мальтазы слюны"],correct:[2,3]},
+            {id:949,q:"Назовите пищеварительные функции слюны:",opts:["ферментативная обработка пищи","бактерицидная","формирование пищевого комка","экскреторная"],correct:[0,2]},
+            {id:950,q:"Секрет подъязычной слюнной железы является…",opts:["изотоничным","слизистым","белковым","серозным"],correct:[1]},
+            {id:951,q:"Может ли осуществляться всасывание в ротовой полости?",opts:["всасывание начинается только в тонком кишечнике","в полости рта всасывание невозможно","всасывание начинается только в толстом кишечнике","всасывание начинается только в желудке","только некоторых веществ"],correct:[4]},
+            {id:952,q:"По отношению к плазме крови, слюна является…",opts:["изотоничной","гипотоничной","гипертоничной"],correct:[1]},
+            {id:953,q:"Подчелюстные железы вырабатывают...",opts:["серозную (белковую) слюну","серозно-слизистую (смешанную) слюну","HCl","слизистую слюну"],correct:[1]},
+            {id:954,q:"Основной объем секреции в полости рта обеспечивается:",opts:["подчелюстными железами","околоушными железами","подъязычными железами","одиночными железами слизистой полости рта"],correct:[0]},
+            {id:955,q:"рН слюны составляет:",opts:["8,5 - 9,2","3,2 - 4,5","1,5 - 2,0","6,8 - 7,4"],correct:[3]},
+            {id:956,q:"Мальтаза действует на:",opts:["полисахариды","жиры","белки","дисахариды"],correct:[3]},
+            {id:957,q:"В состав желудочного сока входят:",opts:["пепсины","мальтаза","липаза","энтерокиназа"],correct:[0,2]},
+            {id:958,q:"Рецепторы, раздражение которых вызывает рефлекс глотания, располагаются на …",opts:["поверхности корня языка","боковой поверхности языка","средней трети языка","передней трети языка"],correct:[0]},
+            {id:959,q:"Гастриксин представляет собой:",opts:["мальтазу","протеолитический фермент","изоформу пепсина","пепсиноген"],correct:[1,2]},
+            {id:960,q:"Пепсины действуют на:",opts:["аминокислоты","дисахариды","жиры","белки"],correct:[3]},
+            {id:961,q:"Функциями соляной кислоты желудочного сока являются:",opts:["активация липазы","бактерицидное действие","регуляция работы пилорического сфинктера","активация пепсиногенов","эмульгирование жиры","денатурация белков"],correct:[1,2,3,5]},
+            {id:962,q:"Запись жевательных движений нижней челюсти называется:",opts:["мастикациографией","миографией","гнатодинамометрией","гастрографией"],correct:[0]},
+            {id:963,q:"Действие ферментов желудочного сока осуществляется в:",opts:["щелочной среде","нейтральной среде","кислой среде","не зависит от кислотности среды"],correct:[2]},
+            {id:964,q:"В ротовой полости начинается расщепление:",opts:["белков","нуклеотидов","углеводов","жиров"],correct:[2]},
+            {id:965,q:"Куриный белок в прокипяченном желудочном соке...",opts:["набухнет","полностью расщепится","окрасится в фиолетовый цвет"],correct:[0]},
+            {id:966,q:"Ферментами, входящими в состав желудочного сока являются:",opts:["трипсин","гастрин","секретин","пепсины"],correct:[3]},
+            {id:967,q:"Активную среду в желудке на высоте пищеварения создает:",opts:["пепсин","фосфатный буфер","бикарбонат","соляная кислота"],correct:[3]},
+            {id:968,q:"Протеолитическими ферментами желудка являются:",opts:["гастрин","трипсин","секретин","пепсин"],correct:[3]},
+            {id:969,q:"Денатурацию и набухание белков в желудке вызывает:",opts:["гастрин","соляная кислота","пепсин","слизь"],correct:[1]},
+            {id:970,q:"Белки в желудке расщепляются до:",opts:["альбумоз и пептонов","аминокислот","углекислого газа, воды и азотистых соединений"],correct:[0]},
+            {id:971,q:"Внутренний фактор Касла (гастромукопротеин):",opts:["обеспечивает необходимую рH желудочного сока","необходим для всасывания железа","активирует пепсиногены","необходим для всасывания витамина B12"],correct:[3]},
+            {id:972,q:"Чувство изжоги возникает вследствие…",opts:["процесса попадания содержимого желудка в пищевод","процесса нейтрализации кислого содержимого пищи","процесса попадания содержимого пищевода в желудок","работы механизмов, обеспечивающих попадание пищи в желудок"],correct:[0]},
+            {id:973,q:"Гастроэзофагальный рефлюкс представляет собой:",opts:["процесс попадания содержимого пищевода в желудок","процесс попадания содержимого желудка в пищевод","механизмы, обеспечивающие попадание пищи в желудок","процесс нейтрализации кислого содержимого пищи"],correct:[1]},
+            {id:974,q:"Анемия после удаления части желудка развивается вследствие недостатка…",opts:["фибринстабилизирующего фактора","внутреннего фактора Касла","пепсиногена","фактора Хагемана","внешнего фактора Касла"],correct:[1]},
+            {id:975,q:"рН желудочного содержимого натощак составляет:",opts:["3,1-4,0","7,0-8,5","1,5-2,0","0,1-0,8"],correct:[2]},
+            {id:976,q:"рН желудочного содержимого в желудочную фазу может достигать:",opts:["3,1-4,0","7,0-8,5","0,8-1,0","1,5-2,0"],correct:[2]},
+            {id:977,q:"рН желудочного содержимого во время приема пищи составляет:",opts:["3,1-4,0","0,8-1,0","1,5-2,0","8,0-9,0"],correct:[0]},
+            {id:978,q:"Протеолитические ферменты секрета желудка в щелочной среде…",opts:["ингибируются","не изменяют своих свойств","активируются"],correct:[0]},
+            {id:979,q:"С наименьшей скоростью из желудка эвакуируются…",opts:["белки","витамины","жиры","углеводы"],correct:[2]},
+            {id:980,q:"Желудочный секрет имеет наибольшую кислотность при переваривании…",opts:["балластных веществ","жиров","углеводов","белков"],correct:[3]},
+            {id:981,q:"Причиной анемии при удалении желудка или его значительной части является:",opts:["дефицит аминокислот","дефицит железа","дефицит витамина B12","недостаток гастрина"],correct:[2]},
+            {id:982,q:"Функцию депонирования пищи выполняет:",opts:["тонкий кишечник","желудок","прямая кишка","толстый кишечник"],correct:[1]},
+            {id:983,q:"Величина суточного объема желудочного секрета у взрослого человека составляет:",opts:["1,5-3 л","более 3 л","0,5-0,7 л","0,1-0,3 л"],correct:[0]},
+            {id:984,q:"Компонентом желудочного секрета, предохраняющий слизистую оболочку желудка от самопереваривания является:",opts:["соляная кислота","липаза","муцин","пепсин","гастриксин"],correct:[2]},
+            {id:985,q:"Защита слизистой оболочки желудка от действия агрессивных факторов не осуществляется с помощью:",opts:["слизистого барьера","высокой степени регенерации слизистой оболочки","пепсина, соляной кислоты","лизоцима, муцина"],correct:[2]},
+            {id:986,q:"Прием алкоголя натощак вызывает быстрое опьянение поскольку:",opts:["происходит его всасывание в тонком кишечнике","происходит его всасывание в желудке","происходит его всасывание в ротовой полости","активируется его метаболизм"],correct:[1]},
+            {id:987,q:"Открытию пилорического сфинктера желудка способствуют:",opts:["щелочная среда в пилорическом отделе желудка и в 12-перстной кишке","кислая среда в пилорическом отделе желудка и в 12-перстной кишке","кислая среда в пилорическом отделе желудка и щелочная в 12-перстной кишке","щелочная среда в пилорическом отделе желудка и кислая в 12-перстной кишке"],correct:[2]},
+            {id:988,q:"Кривые желудочной секреции, полученные И.П. Павловым экспериментальным путем отражают:",opts:["степень переваривания жиров, белков и углеводов в желудке","скорость поступления пищи в желудок","скорость опорожнения желудка","объем депонированной в желудке пищи","приспособительный характер секреции желудка к количеству и составу пищи"],correct:[4]},
+            {id:989,q:"Ферментативной обработке в желудке подвергаются:",opts:["белки, эмульгированные жиры и незначительно углеводы","только жиры","только белки","только белки и эмульгированные жиры","только эмульгированные жиры и углеводы"],correct:[0]},
+            {id:990,q:"К повреждающим факторам желудочного сока относятся:",opts:["достаточное кровоснабжение слизистой оболочки","регенерация эпителиальных клеток в слизистой оболочке","соляная кислота и пепсин","желудочная слизь (муцины)"],correct:[2]},
+            {id:991,q:"Электрогастрография – это регистрация суммарной электрической активности…",opts:["кишечника","стенки сосудов","двенадцатиперстной кишки","желудка"],correct:[3]},
+            {id:992,q:"Одновременная и полная характеристика секреторной и моторной функции желудка осуществляется с помощью:",opts:["зондирования желудка","рентгеноскопии","рентгенографии","электрогастрографии"],correct:[0]}
         ];
-        
+
+        // --- ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ---
         let activeQuestions = [];
         let currentIndex = 0;
-        let userAnswers = {};
+        let userAnswers = {}; // { "902": { selected: Set, isSubmitted: bool, isCorrect: bool }, ... }
         let currentMode = 'default';
-        const storageKey = 'physio_quiz_progress_v7_neon';
+        const storageKey = 'physio_quiz_progress_v8_pro'; // Новая версия
 
+        // --- DOM ЭЛЕМЕНТЫ ---
         const screens = {
             start: document.getElementById('start-screen'),
             quiz: document.getElementById('quiz-screen'),
@@ -241,6 +598,7 @@
         };
         const resumeBtn = document.getElementById('resume-block');
         const quizFooter = document.getElementById('quiz-footer');
+        const cardContainer = document.getElementById('question-card');
         const qIdEl = document.getElementById('q-id-display');
         const qTextEl = document.getElementById('q-text');
         const optionsList = document.getElementById('options-list');
@@ -249,8 +607,9 @@
         const nextBtn = document.getElementById('next-btn');
         const themeToggleBtns = document.querySelectorAll('.theme-toggle');
         const mistakesBtn = document.getElementById('mistakes-btn');
-        const progressText = document.getElementById('progress-text');
+        const progressPill = document.getElementById('progress-pill');
 
+        // --- ИНИЦИАЛИЗАЦИЯ ---
         document.addEventListener('DOMContentLoaded', () => {
             loadTheme();
             if (localStorage.getItem(storageKey)) {
@@ -259,6 +618,7 @@
             themeToggleBtns.forEach(btn => btn.onclick = toggleTheme);
         });
 
+        // --- ЛОГИКА ТЕМЫ ---
         function toggleTheme() {
             const currentTheme = document.body.getAttribute('data-theme');
             const newTheme = (currentTheme === 'dark') ? 'light' : 'dark';
@@ -274,7 +634,7 @@
         }
 
         function loadTheme() {
-            const theme = localStorage.getItem('gi_theme') || 'dark'; // NEON по умолчанию темный
+            const theme = localStorage.getItem('gi_theme') || 'light'; // PRO по умолчанию светлый
             if (theme === 'dark') {
                 document.body.setAttribute('data-theme', 'dark');
                 themeToggleBtns.forEach(btn => btn.innerHTML = '<i class="fas fa-sun"></i>');
@@ -284,18 +644,26 @@
             }
         }
 
+        // --- ЛОГИКА СТАРТА ТЕСТА ---
         function startQuiz(mode) {
             currentMode = mode;
             
             if (mode === 'resume') {
-                if (!loadProgress()) { startQuiz('new'); return; }
+                if (!loadProgress()) {
+                    alert("Сохраненные данные не найдены. Начинаем заново.");
+                    startQuiz('new');
+                    return;
+                }
             } else if (mode === 'mistakes') {
                 const mistakeIDs = Object.keys(userAnswers).filter(id => !userAnswers[id].isCorrect);
-                if (mistakeIDs.length === 0) { alert("Нет ошибок для работы!"); return; }
+                if (mistakeIDs.length === 0) {
+                     alert("Нет ошибок для работы! Поздравляем!");
+                     return;
+                }
                 activeQuestions = fullQuizData.filter(q => mistakeIDs.includes(q.id.toString()));
                 currentIndex = 0;
-                userAnswers = {};
-            } else {
+                userAnswers = {}; // Сбрасываем ответы для нового прогона
+            } else { // 'new' or 'shuffle'
                 activeQuestions = JSON.parse(JSON.stringify(fullQuizData)); 
                 if (mode === 'shuffle') {
                     shuffleArray(activeQuestions);
@@ -309,11 +677,13 @@
                 userAnswers = {};
                 localStorage.removeItem(storageKey);
             }
+
             switchScreen('quiz');
             renderQuestion(true);
         }
         
-        function renderQuestion(isFirstLoad = false) {
+        // --- ЛОГИКА РЕНДЕРА ВОПРОСА ---
+        function renderQuestion(isFirstLoad = false, direction = 'right') {
             const q = activeQuestions[currentIndex];
             if (!q) return;
 
@@ -322,23 +692,42 @@
             }
             const state = userAnswers[q.id];
 
-            progressText.textContent = `${currentIndex + 1} / ${activeQuestions.length}`;
+            progressPill.textContent = `${currentIndex + 1} / ${activeQuestions.length}`;
             qIdEl.textContent = `#${q.id}`;
             qTextEl.textContent = q.q;
+
+            cardContainer.style.animation = 'none';
+            if (!isFirstLoad) {
+                void cardContainer.offsetWidth; // Force reflow
+                cardContainer.style.animation = `fadeIn 0.3s ease-out`;
+            }
 
             optionsList.innerHTML = '';
             q.opts.forEach((optText, idx) => {
                 const div = document.createElement('div');
                 div.className = 'option';
-                div.innerHTML = `<div class="option-marker"></div><span class="option-text">${optText}</span>`;
+                div.innerHTML = `<div class="option-marker"><i class="fas"></i></div><div class="option-text">${optText}</div>`;
+
+                const markerIcon = div.querySelector('.option-marker i');
 
                 if (state.isSubmitted) {
                     div.classList.add('disabled');
-                    if (q.correct.includes(idx)) div.classList.add('correct');
-                    else if (state.selected.has(idx)) div.classList.add('incorrect');
-                    if (q.correct.includes(idx) && !state.selected.has(idx)) div.classList.add('missed');
+                    if (q.correct.includes(idx)) {
+                        div.classList.add('correct');
+                        markerIcon.classList.add('fa-check');
+                    }
+                    else if (state.selected.has(idx)) {
+                        div.classList.add('incorrect');
+                        markerIcon.classList.add('fa-times');
+                    }
+                    if (q.correct.includes(idx) && !state.selected.has(idx)) {
+                        div.classList.add('missed');
+                    }
                 } else {
-                    if (state.selected.has(idx)) div.classList.add('selected');
+                    if (state.selected.has(idx)) {
+                        div.classList.add('selected');
+                        markerIcon.classList.add('fa-check');
+                    }
                     div.onclick = () => toggleOption(q.id, idx);
                 }
                 optionsList.appendChild(div);
@@ -350,24 +739,35 @@
         function toggleOption(qId, idx) {
             const state = userAnswers[qId];
             if (state.isSubmitted) return;
+
             if (state.selected.has(idx)) state.selected.delete(idx);
             else state.selected.add(idx);
             
             const options = document.querySelectorAll('.option');
-            options.forEach((opt, i) => { if (i === idx) opt.classList.toggle('selected'); });
+            options.forEach((opt, i) => { 
+                if (i === idx) {
+                    opt.classList.toggle('selected');
+                    opt.querySelector('.option-marker i').classList.toggle('fa-check', state.selected.has(idx));
+                }
+            });
             updateFooter(state);
         }
 
+        // --- ЛОГИКА ФУТЕРА/КНОПОК ---
         function updateFooter(state) {
             prevBtn.disabled = (currentIndex === 0);
             nextBtn.disabled = (currentIndex === activeQuestions.length - 1);
             
             if (state.isSubmitted) {
-                mainBtn.textContent = (currentIndex === activeQuestions.length - 1) ? "Завершить" : "Далее";
+                mainBtn.textContent = "Далее";
                 mainBtn.disabled = false;
                 mainBtn.className = 'action-btn';
                 if(state.isCorrect) mainBtn.classList.add('correct');
                 else mainBtn.classList.add('incorrect');
+                
+                if (currentIndex === activeQuestions.length - 1) {
+                    mainBtn.textContent = "Завершить";
+                }
             } else {
                 mainBtn.textContent = "Ответить";
                 mainBtn.disabled = (state.selected.size === 0);
@@ -387,19 +787,6 @@
                 checkAnswer();
             }
         }
-        
-        function nextQ() {
-            if (currentIndex < activeQuestions.length - 1) {
-                currentIndex++;
-                renderQuestion(false);
-            }
-        }
-        function prevQ() {
-            if (currentIndex > 0) {
-                currentIndex--;
-                renderQuestion(false);
-            }
-        }
 
         function checkAnswer() {
             const q = activeQuestions[currentIndex];
@@ -414,7 +801,22 @@
             if (currentMode !== 'mistakes') saveProgress();
             renderQuestion(false);
         }
-        
+
+        function nextQ() {
+            if (currentIndex < activeQuestions.length - 1) {
+                currentIndex++;
+                renderQuestion(false, 'right');
+            }
+        }
+
+        function prevQ() {
+            if (currentIndex > 0) {
+                currentIndex--;
+                renderQuestion(false, 'left');
+            }
+        }
+
+        // --- РЕЗУЛЬТАТЫ И СОХРАНЕНИЕ ---
         function finishQuiz() {
             let correctCount = 0;
             activeQuestions.forEach(q => {
