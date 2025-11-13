@@ -3,88 +3,101 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Тренажер (Focus Демо)</title>
+    <title>Тренажер (Neon Демо)</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Lora:wght@500&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@500&family=Inter:wght@400;700&display=swap" rel="stylesheet">
     
     <style>
         :root {
-            --bg: #FFFFFF;
-            --card-bg: #FFFFFF;
-            --text-primary: #171717;
-            --text-secondary: #737373;
-            --accent: #007AFF; /* Apple Blue */
-            --success: #34C759;
-            --error: #FF3B30;
-            --border: #E5E5E5;
+            --bg: #121212;
+            --card-bg: #1E1E1E;
+            --text-primary: #EAEAEA;
+            --text-secondary: #A0A0A0;
+            --accent: #1DB954; /* Spotify Green */
+            --accent-hover: #1ED760;
+            --success: #1DB954;
+            --error: #F44336;
+            --border: #2D2D2D;
+            --font-main: 'Inter', sans-serif;
+            --font-code: 'Roboto Mono', monospace;
             --tg-color: #2481cc;
-            --font-serif: 'Lora', serif;
-            --font-sans: 'Inter', sans-serif;
         }
 
-        [data-theme="dark"] {
-            --bg: #1C1C1E;
-            --card-bg: #1C1C1E;
-            --text-primary: #F2F2F7;
-            --text-secondary: #8E8E93;
-            --accent: #0A84FF;
-            --success: #30D158;
-            --error: #FF453A;
-            --border: #3A3A3C;
+        /* Светлая тема (если вдруг понадобится) */
+        [data-theme="light"] {
+            --bg: #FFFFFF;
+            --card-bg: #F9F9F9;
+            --text-primary: #121212;
+            --text-secondary: #555555;
+            --accent: #1DB954;
+            --accent-hover: #1DB954;
+            --border: #E5E5E5;
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        html, body { font-family: var(--font-sans); background-color: var(--bg); color: var(--text-primary); min-height: 100vh; }
+        html, body { font-family: var(--font-main); background-color: var(--bg); color: var(--text-primary); min-height: 100vh; }
 
         .container { max-width: 640px; width: 100%; margin: 0 auto; padding: 20px 20px 140px 20px; }
         .screen { display: none; flex-direction: column; width: 100%; flex: 1; animation: fadeIn 0.3s; }
         .screen.active { display: flex; }
         
         /* --- СТАРТ --- */
-        .start-header { margin: 40px 0; }
-        .start-header h1 { font-family: var(--font-serif); font-size: 2.5rem; color: var(--text-primary); margin-bottom: 10px; }
+        .start-header { margin: 40px 0; text-align: center; }
+        .start-header h1 { font-family: var(--font-code); font-size: 2.2rem; color: var(--accent); margin-bottom: 10px; }
         .start-header p { font-size: 1.1rem; color: var(--text-secondary); line-height: 1.6; }
         
         .start-controls { display: flex; flex-direction: column; gap: 12px; }
         .menu-btn {
-            padding: 16px; border: 1px solid var(--border); border-radius: 8px; font-size: 1rem; font-weight: 500; cursor: pointer;
+            padding: 16px; border: 2px solid var(--border); border-radius: 8px; font-size: 1rem; font-weight: 700; cursor: pointer;
             background: var(--card-bg); color: var(--text-primary); text-align: left;
             display: flex; align-items: center; gap: 12px; transition: all 0.2s;
         }
-        .menu-btn:hover { border-color: var(--text-primary); }
-        .menu-btn.primary { background: var(--text-primary); color: var(--bg); border-color: var(--text-primary); }
+        .menu-btn:hover { border-color: var(--accent); color: var(--accent); }
+        .menu-btn.primary { background: var(--accent); color: var(--bg); border-color: var(--accent); }
+        .menu-btn.primary:hover { background: var(--accent-hover); border-color: var(--accent-hover); }
+        .menu-btn i { width: 20px; text-align: center; color: var(--text-secondary); }
+        .menu-btn:hover i { color: var(--accent); }
+        .menu-btn.primary i { color: var(--bg); }
 
         .top-settings { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
         .theme-toggle { background: none; border: none; color: var(--text-secondary); font-size: 1.2rem; cursor: pointer; }
-        .progress-text { font-weight: 500; font-size: 0.9rem; color: var(--text-secondary); }
+        .progress-text { font-family: var(--font-code); font-weight: 500; font-size: 1rem; color: var(--text-secondary); }
 
         /* --- ТЕСТ --- */
-        .q-id { font-size: 0.9rem; font-weight: 600; color: var(--text-secondary); margin-bottom: 8px; }
-        .q-title { font-family: var(--font-serif); font-size: 1.8rem; font-weight: 500; line-height: 1.4; margin-bottom: 30px; color: var(--text-primary); }
+        .q-id { font-family: var(--font-code); font-size: 0.9rem; font-weight: 500; color: var(--accent); margin-bottom: 8px; }
+        .q-title { font-size: 1.5rem; font-weight: 700; line-height: 1.4; margin-bottom: 30px; color: var(--text-primary); }
         
-        .options-list { display: flex; flex-direction: column; gap: 8px; }
+        .options-list { display: flex; flex-direction: column; gap: 12px; }
         .option {
-            padding: 12px 10px; border-radius: 6px; cursor: pointer;
-            font-size: 1rem; line-height: 1.5; transition: all 0.2s;
-            display: flex; align-items: flex-start; gap: 10px;
+            background: var(--card-bg);
+            border: 2px solid var(--border);
+            padding: 16px; border-radius: 8px; cursor: pointer;
+            font-size: 1rem; font-weight: 500; line-height: 1.4;
+            transition: all 0.2s; display: flex; align-items: center; gap: 15px;
         }
-        .option:hover:not(.disabled) { background-color: var(--border); }
+        .option:hover:not(.disabled) { border-color: var(--accent); }
+        
         .option-marker {
-            font-weight: 500; color: var(--text-secondary);
-            min-width: 20px; text-align: right;
+            width: 24px; height: 24px; border-radius: 50%; border: 2px solid var(--border);
+            flex-shrink: 0; display: flex; align-items: center; justify-content: center;
+            transition: 0.2s;
         }
         
         /* Состояния */
-        .option.selected:not(.disabled) { background-color: #FFFBEB; }
-        .option.correct { background-color: transparent; color: var(--success); font-weight: 600; }
-        .option.correct .option-marker { color: var(--success); }
-        .option.incorrect { background-color: transparent; color: var(--error); text-decoration: line-through; }
-        .option.incorrect .option-marker { color: var(--error); }
-        .option.missed { color: var(--success); opacity: 0.7; }
-        .option.disabled { cursor: default; }
-        .option.disabled:not(.correct):not(.incorrect) { opacity: 0.5; }
+        .option.selected:not(.disabled) { border-color: var(--accent); }
+        .option.selected:not(.disabled) .option-marker { background: var(--accent); border-color: var(--accent); }
+
+        .option.correct { border-color: var(--success); }
+        .option.correct .option-marker { background: var(--success); border-color: var(--success); }
+        
+        .option.incorrect { border-color: var(--error); }
+        .option.incorrect .option-marker { background: var(--error); border-color: var(--error); }
+        
+        .option.missed { border: 2px dashed var(--success); opacity: 0.7; }
+        .option.disabled { cursor: default; opacity: 0.6; }
+        .option.disabled:not(.correct):not(.incorrect) { opacity: 0.4; }
 
 
         /* --- ФУТЕР --- */
@@ -93,27 +106,28 @@
             background: var(--card-bg); border-top: 1px solid var(--border);
         }
         .quiz-footer .container { padding: 0; }
-        .controls { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .controls { display: grid; grid-template-columns: 1fr 2fr 1fr; gap: 15px; }
         .nav-btn {
-            height: 44px; border-radius: 8px; border: 1px solid var(--border);
-            cursor: pointer; font-size: 1rem; font-weight: 600;
+            height: 50px; border-radius: 25px; border: 2px solid var(--border);
+            cursor: pointer; font-size: 1.2rem;
             display: flex; align-items: center; justify-content: center;
             background: var(--card-bg); color: var(--text-primary);
         }
-        .nav-btn:hover:not(:disabled) { background-color: var(--border); }
+        .nav-btn:hover:not(:disabled) { border-color: var(--text-primary); }
         .nav-btn:disabled { opacity: 0.3; cursor: not-allowed; }
         
         .action-btn {
-            height: 44px; border-radius: 8px; border: none; cursor: pointer;
-            font-weight: 600; font-size: 1rem; color: white;
+            height: 50px; border-radius: 25px; border: none; cursor: pointer;
+            font-weight: 700; font-size: 1rem; color: var(--bg);
             background: var(--accent);
         }
-        .action-btn:disabled { background: var(--text-secondary); }
+        .action-btn:hover:not(:disabled) { background: var(--accent-hover); }
+        .action-btn:disabled { background: var(--text-secondary); color: var(--bg); }
         .action-btn.correct { background: var(--success); }
         .action-btn.incorrect { background: var(--error); }
 
         /* --- РЕЗУЛЬТАТЫ --- */
-        .stat-box { padding: 15px 0; border-bottom: 1px solid var(--border); }
+        .stat-box { padding: 15px 0; border-bottom: 1px solid var(--border); text-align: center; }
         .stat-val { font-size: 1.8rem; font-weight: 700; }
         .stat-label { font-size: 0.9rem; color: var(--text-secondary); }
         .stat-val.correct { color: var(--success); }
@@ -131,19 +145,17 @@
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     </style>
 </head>
-<body>
-
-    <div class="container">
+<body data-theme="dark"> <div class="container">
 
         <div id="start-screen" class="screen active">
             <div class="top-settings" style="margin-bottom: 0;">
                 <span></span>
                 <button class="theme-toggle" onclick="toggleTheme()" id="theme-toggle-btn-start">
-                    <i class="fas fa-gear"></i>
+                    <i class="fas fa-sun"></i>
                 </button>
             </div>
             <div class="start-header">
-                <h1>Тренажер (Focus)</h1>
+                <h1>Тренажер (NEON)</h1>
                 <p>Тест-драйв 5 вопросов (902-906).<br>Все функции включены.</p>
             </div>
             
@@ -166,7 +178,7 @@
             <div class="top-settings">
                  <div class="progress-text" id="progress-text">1 / 5</div>
                 <button class="theme-toggle" onclick="toggleTheme()" id="theme-toggle-btn-quiz">
-                    <i class="fas fa-gear"></i>
+                    <i class="fas fa-sun"></i>
                 </button>
             </div>
             
@@ -196,8 +208,9 @@
     <div class="quiz-footer" id="quiz-footer" style="display: none;">
         <div class="container" style="padding-bottom: 0;">
              <div class="controls">
-                <button class="nav-btn" id="prev-btn" onclick="prevQ()">← Назад</button>
+                <button class="nav-btn" id="prev-btn" onclick="prevQ()"><i class="fas fa-arrow-left"></i></button>
                 <button class="action-btn" id="main-btn" onclick="handleMainClick()">Ответить</button>
+                <button class="nav-btn" id="next-btn" onclick="nextQ()"><i class="fas fa-arrow-right"></i></button>
             </div>
         </div>
     </div>
@@ -219,7 +232,7 @@
         let currentIndex = 0;
         let userAnswers = {};
         let currentMode = 'default';
-        const storageKey = 'physio_quiz_progress_v7_focus';
+        const storageKey = 'physio_quiz_progress_v7_neon';
 
         const screens = {
             start: document.getElementById('start-screen'),
@@ -233,6 +246,7 @@
         const optionsList = document.getElementById('options-list');
         const mainBtn = document.getElementById('main-btn');
         const prevBtn = document.getElementById('prev-btn');
+        const nextBtn = document.getElementById('next-btn');
         const themeToggleBtns = document.querySelectorAll('.theme-toggle');
         const mistakesBtn = document.getElementById('mistakes-btn');
         const progressText = document.getElementById('progress-text');
@@ -248,7 +262,11 @@
         function toggleTheme() {
             const currentTheme = document.body.getAttribute('data-theme');
             const newTheme = (currentTheme === 'dark') ? 'light' : 'dark';
-            document.body.setAttribute('data-theme', newTheme);
+            if (newTheme === 'light') {
+                document.body.removeAttribute('data-theme');
+            } else {
+                document.body.setAttribute('data-theme', newTheme);
+            }
             localStorage.setItem('gi_theme', newTheme);
             themeToggleBtns.forEach(btn => {
                 btn.innerHTML = (newTheme === 'dark') ? '<i class="fas fa-sun"></i>' : '<i class="fas fa-moon"></i>';
@@ -256,7 +274,7 @@
         }
 
         function loadTheme() {
-            const theme = localStorage.getItem('gi_theme');
+            const theme = localStorage.getItem('gi_theme') || 'dark'; // NEON по умолчанию темный
             if (theme === 'dark') {
                 document.body.setAttribute('data-theme', 'dark');
                 themeToggleBtns.forEach(btn => btn.innerHTML = '<i class="fas fa-sun"></i>');
@@ -312,7 +330,7 @@
             q.opts.forEach((optText, idx) => {
                 const div = document.createElement('div');
                 div.className = 'option';
-                div.innerHTML = `<span class="option-marker">${idx + 1})</span><span class="option-text">${optText}</span>`;
+                div.innerHTML = `<div class="option-marker"></div><span class="option-text">${optText}</span>`;
 
                 if (state.isSubmitted) {
                     div.classList.add('disabled');
@@ -342,6 +360,7 @@
 
         function updateFooter(state) {
             prevBtn.disabled = (currentIndex === 0);
+            nextBtn.disabled = (currentIndex === activeQuestions.length - 1);
             
             if (state.isSubmitted) {
                 mainBtn.textContent = (currentIndex === activeQuestions.length - 1) ? "Завершить" : "Далее";
@@ -360,13 +379,25 @@
             const state = userAnswers[activeQuestions[currentIndex].id];
             if (state.isSubmitted) {
                 if (currentIndex < activeQuestions.length - 1) {
-                    currentIndex++;
-                    renderQuestion();
+                    nextQ();
                 } else {
                     finishQuiz();
                 }
             } else {
                 checkAnswer();
+            }
+        }
+        
+        function nextQ() {
+            if (currentIndex < activeQuestions.length - 1) {
+                currentIndex++;
+                renderQuestion(false);
+            }
+        }
+        function prevQ() {
+            if (currentIndex > 0) {
+                currentIndex--;
+                renderQuestion(false);
             }
         }
 
@@ -384,13 +415,6 @@
             renderQuestion(false);
         }
         
-        function prevQ() {
-            if (currentIndex > 0) {
-                currentIndex--;
-                renderQuestion(false);
-            }
-        }
-
         function finishQuiz() {
             let correctCount = 0;
             activeQuestions.forEach(q => {
@@ -462,7 +486,7 @@
         
         document.addEventListener('keydown', (e) => {
             if (screens.quiz.classList.contains('active')) {
-                if (e.key === 'ArrowRight') mainBtn.click();
+                if (e.key === 'ArrowRight') nextBtn.click();
                 if (e.key === 'ArrowLeft') prevBtn.click();
                 if (e.key === 'Enter') mainBtn.click();
             }
