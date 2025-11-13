@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Тренажер по Физиологии (902-992)</title>
+    <title>Физиология ЖКТ (Ultimate)</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -579,6 +579,11 @@
             
             renderQuestion(false); // Перерисовать с цветами
         }
+        
+        // --- Эта функция больше не нужна, т.к. ее логика в handleMainClick ---
+        // function nextQ() { ... } 
+        // --- Эта функция больше не нужна ---
+        // function prevQ() { ... } 
 
         // --- РЕЗУЛЬТАТЫ И СОХРАНЕНИЕ ---
         function finishQuiz() {
@@ -668,10 +673,10 @@
             
             if(screenName === 'quiz') {
                 quizFooter.style.display = 'block';
-                topProgress.style.display = 'block';
+                // topProgress.style.display = 'block'; // Уже в .top-bar, не нужно
             } else {
                 quizFooter.style.display = 'none';
-                topProgress.style.display = 'none';
+                // topProgress.style.display = 'none'; // Уже в .top-bar, не нужно
             }
         }
 
@@ -686,12 +691,6 @@
         // --- УПРАВЛЕНИЕ С КЛАВИАТУРЫ ---
         document.addEventListener('keydown', (e) => {
             if (screens.quiz.classList.contains('active')) {
-                // Стрелки работают только если ответ уже дан
-                const state = userAnswers[activeQuestions[currentIndex].id];
-                if (state && state.isSubmitted) {
-                    if (e.key === 'ArrowRight') nextQ();
-                    if (e.key === 'ArrowLeft') prevQ();
-                }
                 if (e.key === 'Enter') mainBtn.click();
             }
         });
