@@ -261,6 +261,7 @@
         }
         .option.selected:not(.disabled) .option-marker i {
             opacity: 1;
+            /* \f00c это FontAwesome "галочка" */
             content: '\f00c'; 
             font-family: "Font Awesome 6 Free";
             font-weight: 900;
@@ -294,6 +295,7 @@
         }
         .option.incorrect .option-marker i {
             opacity: 1;
+             /* \f00d это FontAwesome "крестик" */
             content: '\f00d';
             font-family: "Font Awesome 6 Free";
             font-weight: 900;
@@ -315,6 +317,7 @@
             left: 0;
             right: 0;
             padding: 20px;
+            /* Плавающий эффект */
             background: linear-gradient(180deg, rgba(255,255,255,0) 0%, var(--card-bg) 30%);
             border-top: 1px solid var(--border);
         }
@@ -416,7 +419,7 @@
             </div>
             <div class="start-header">
                 <h1>ЖКТ 902-992</h1>
-                <p>91 вопрос по физиологии ЖКТ.<br>Все функции включены.</p>
+                <p>Страницы 155-169<br>91 вопрос по физиологии ЖКТ.</p>
             </div>
             
             <div class="start-controls">
@@ -492,6 +495,7 @@
     
     <script>
         // --- БАЗА ДАННЫХ ВОПРОСОВ (902-992) ---
+        // *** ПОЛНЫЙ МАССИВ ИЗ 91 ВОПРОСА ***
         const fullQuizData = [
             {id:902,q:"Укажите особенности, характерные для полого органа:",opts:["имеет строму и паренхиму","имеет паренхиму и дольчатое строение","имеет внутреннюю полость и 3-х слойную стенку","имеет строму и внутреннюю полость"],correct:[2]},
             {id:903,q:"Укажите особенности, характерные для паренхиматозного органа:",opts:["имеет внутреннюю полость и 3-х слойную стенку","имеет паренхиму и дольчатое строение","имеет строму и паренхиму","имеет строму и внутреннюю полость"],correct:[1,2]},
@@ -842,6 +846,7 @@
         // --- РЕЗУЛЬТАТЫ И СОХРАНЕНИЕ ---
         function finishQuiz() {
             let correctCount = 0;
+            // ИСПРАВЛЕНИЕ: Считаем ошибки только в `activeQuestions`
             activeQuestions.forEach(q => {
                 if(userAnswers[q.id] && userAnswers[q.id].isCorrect) { correctCount++; }
             });
