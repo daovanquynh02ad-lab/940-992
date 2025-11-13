@@ -227,6 +227,37 @@
         align-items: flex-start;
       }
     }
+    /* --- Telegram floating button --- */
+.tg-fab {
+  position: fixed;
+  right: 22px;
+  bottom: 22px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #229ED9;
+  color: white;
+  padding: 12px 18px;
+  border-radius: 50px;
+  text-decoration: none;
+  font-size: 15px;
+  font-weight: 500;
+  box-shadow: 0 8px 25px rgba(34,158,217,0.45);
+  transition: transform 0.25s ease, box-shadow 0.25s ease, opacity 0.25s;
+  opacity: 0.93;
+}
+
+.tg-fab:hover {
+  transform: scale(1.08);
+  box-shadow: 0 12px 32px rgba(34,158,217,0.55);
+  opacity: 1;
+}
+
+.tg-fab svg {
+  width: 22px;
+  height: 22px;
+  fill: white;
+}
   </style>
 </head>
 <body>
@@ -1273,5 +1304,12 @@ els.checkAll.addEventListener("click", checkAll);
 
 renderQuestion();
 </script>
+  <a href="https://t.me/stewonly" target="_blank" class="tg-fab">
+  <svg viewBox="0 0 24 24">
+    <path d="M9.99971 15.1701L9.93771 20.7391C10.6427 20.7391 10.9487 20.4391 11.3177 20.0741L14.3327 17.2181L19.8437 21.2581C20.8537 21.8181 21.5727 21.5281 21.8297 20.3581L23.9477 10.4501C24.3077 8.99809 23.5427 8.43809 22.5627 8.79809L4.44771 15.7081C2.99771 16.2681 3.00771 17.0781 4.17771 17.4381L9.99971 15.1701ZM7.43971 14.2481L18.7897 9.29809C19.3697 9.04809 19.8927 9.22809 19.4527 9.52809L10.9997 15.9481L10.4877 20.5081L7.43971 14.2481Z"/>
+  </svg>
+  @stewonly
+</a>
+
 </body>
 </html>
