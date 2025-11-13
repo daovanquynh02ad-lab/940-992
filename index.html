@@ -1302,23 +1302,47 @@ function checkAll() {
 }
 
 let answeredThisQuestion = false;
+  let forwardCheckFlag = false;
 
 els.next.addEventListener("click", () => {
+  const q = questions[current];
 
-  // 1 — если ещё не проверяли вопрос → проверяем
-  if (!answeredThisQuestion) {
-    checkAnswer();
-    answeredThisQuestion = true;
-    return; // НЕ переходим вперёд сразу
+  // Если ещё не проверяли → проверяем
+  if (!forwardCheckFlag) {
+    checkAnswerInternal();
+    forwardCheckFlag = true;
+    return;
   }
 
-  // 2 — если уже проверено → переходим к следующему
+  // Если уже проверили → переходим дальше
+  forwardCheckFlag = false;
+
   if (current < questions.length - 1) {
     current++;
-    answeredThisQuestion = false; // сбрасываем на новый вопрос
     renderQuestion();
   }
 });
+function checkAnswerInternal() {
+  const q = questions[current];
+  const selected = chosen[current];
+
+  const correctSet = new Set(q.correct);
+  let isCorrect = selected.length === q.correct.length &&
+                  selected.every(i => correctSet.has(i));
+
+  // подсветка
+  [...els.options.children].forEach((li, idx) => {
+    if (correctSet.has(idx)) {
+      li.classList.add("correct");
+    } else if (selected.includes(idx)) {
+      li.classList.add("wrong");
+    }
+  });
+
+  els.status.textContent = isCorrect ? "Верно!" : "Ошибка!";
+  els.status.className = "status " + (isCorrect ? "ok" : "bad");
+}
+
 
 els.next.addEventListener("click", () => {
   if (current < questions.length - 1) {
