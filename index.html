@@ -112,6 +112,7 @@
       display: flex;
       gap: 12px;
       transition: 0.15s;
+      cursor: pointer;
     }
 
     .option:hover {
@@ -135,6 +136,7 @@
       transform: scale(1.25);
       accent-color: #2563eb;
       margin-top: 2px;
+      pointer-events: none; /* чтобы клик обрабатывался по li */
     }
 
     .option-label-text {
@@ -170,6 +172,12 @@
       background: #dc2626;
     }
 
+    button:disabled {
+      opacity: 0.45;
+      cursor: default;
+      box-shadow: none;
+    }
+
     .status {
       margin-top: 10px;
       min-height: 22px;
@@ -194,11 +202,12 @@
       bottom: 0;
       width: 100%;
       padding: 14px 0;
-      background: rgba(255,255,255,0.85);
+      background: rgba(255,255,255,0.9);
       border-top: 1px solid #e5e7eb;
-      backdrop-filter: blur(12px);
+      backdrop-filter: blur(10px);
       display: flex;
       justify-content: center;
+      z-index: 9999;
     }
 
     .tg-link {
@@ -226,6 +235,22 @@
       width: 26px;
       height: 26px;
     }
+
+    @media (max-width: 640px) {
+      .card {
+        padding: 18px 14px 20px;
+        border-radius: 20px;
+      }
+      h1 { font-size: 22px; }
+      .question-text { font-size: 17px; }
+      .option-label-text { font-size: 15px; }
+      .controls { flex-direction: column; }
+      button { width: 100%; justify-content: center; }
+      .top-bar, .question-header {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+    }
   </style>
 </head>
 
@@ -233,12 +258,14 @@
 
 <div class="app">
   <h1>Тест по анатомии и физиологии ЖКТ</h1>
-  <div class="subtitle">Вопросы №902–992 • Можно выбрать один <b>или несколько</b> вариантов ответа</div>
+  <div class="subtitle">
+    Вопросы №902–992 • Можно выбрать <b>один или несколько</b> вариантов ответа
+  </div>
 
   <div class="card">
     <div class="top-bar">
       <div id="top-progress"></div>
-      <div><span class="badge">Подсказка</span> ответ проверяется автоматически</div>
+      <div><span class="badge">Подсказка</span> варианты подсвечиваются сразу при выборе</div>
     </div>
 
     <div class="question-header">
@@ -246,16 +273,16 @@
       <div id="question-id"></div>
     </div>
 
-    <div class="hint">Можно выбрать один или несколько вариантов.</div>
+    <div class="hint">Кликай по варианту — он сразу станет зелёным (если верный) или красным (если нет).</div>
 
     <div id="question-text" class="question-text"></div>
     <ul id="options" class="options"></ul>
 
     <div class="controls">
       <button id="prev-btn" class="secondary">← Назад</button>
-      <button id="next-btn" class="secondary">Вперёд →</button>
-      <button id="reset-btn" class="secondary">Сбросить</button>
-      <button id="check-all-btn" class="danger">Итог теста</button>
+      <button id="next-btn" class="secondary" disabled>Вперёд →</button>
+      <button id="reset-btn" class="secondary">Сбросить этот вопрос</button>
+      <button id="check-all-btn" class="danger">Итог за весь тест</button>
     </div>
 
     <div id="status" class="status info"></div>
@@ -266,15 +293,12 @@
 <!-- ФИКСИРОВАННЫЙ ТГ-БЛОК -->
 <div class="tg-fixed">
   <a class="tg-link" href="https://t.me/stewonly" target="_blank">
-    <img src="https://upload.wikimedia.org/wikipedia/commons/8/82/Telegram_logo.svg">
+    <img src="https://upload.wikimedia.org/wikipedia/commons/8/82/Telegram_logo.svg" alt="">
     @stewonly
   </a>
 </div>
 
 <script>
-/* ========= НАЧАЛО СКРИПТА ========= */
-
-/* массив вопросов будет вставлен в ЧАСТИ 2 и 3 */
 const questions = [
   { id: 902, text: "Укажите особенности, характерные для полого органа:",
     options: [
@@ -1098,10 +1122,6 @@ const questions = [
   }
 ];
 
-/* ==================
-     ЛОГИКА ТЕСТА
-=================== */
-
 let current = 0;
 const chosen = questions.map(() => []);
 
@@ -1119,17 +1139,49 @@ const els = {
   top: document.getElementById("top-progress")
 };
 
+function isQuestionCorrect(idx) {
+  const q = questions[idx];
+  const sel = chosen[idx] || [];
+  if (sel.length !== q.correct.length) return false;
+  return q.correct.every(v => sel.includes(v));
+}
+
+function updateQuestionState() {
+  const q = questions[current];
+  const sel = chosen[current] || [];
+  const selSet = new Set(sel);
+
+  [...els.opts.children].forEach((li, idx) => {
+    li.classList.remove("correct", "wrong");
+    if (selSet.has(idx)) {
+      if (q.correct.includes(idx)) li.classList.add("correct");
+      else li.classList.add("wrong");
+    }
+  });
+
+  if (sel.length === 0) {
+    els.status.textContent = "Выбери вариант(ы) ответа.";
+    els.status.className = "status info";
+  } else if (isQuestionCorrect(current)) {
+    els.status.textContent = "✔ Все верно, можно переходить дальше.";
+    els.status.className = "status ok";
+  } else {
+    els.status.textContent = "✘ Есть ошибки, попробуй ещё.";
+    els.status.className = "status bad";
+  }
+
+  els.next.disabled = !isQuestionCorrect(current);
+  els.progress.textContent = `Вопрос ${current + 1} из ${questions.length}`;
+}
 
 function renderQuestion() {
   const q = questions[current];
   els.qNum.textContent = `Вопрос ${current + 1} из ${questions.length}`;
   els.qId.textContent = `№${q.id}`;
   els.qText.textContent = q.text;
-  els.status.textContent = "";
-
   els.opts.innerHTML = "";
 
-  const selected = new Set(chosen[current]);
+  const sel = new Set(chosen[current]);
 
   q.options.forEach((opt, idx) => {
     const li = document.createElement("li");
@@ -1137,11 +1189,15 @@ function renderQuestion() {
 
     const input = document.createElement("input");
     input.type = "checkbox";
-    input.checked = selected.has(idx);
-    input.addEventListener("change", () => {
-      if (input.checked) selected.add(idx);
-      else selected.delete(idx);
-      chosen[current] = Array.from(selected);
+    input.checked = sel.has(idx);
+
+    li.addEventListener("click", (e) => {
+      // клик по всей строке
+      if (sel.has(idx)) sel.delete(idx);
+      else sel.add(idx);
+      chosen[current] = Array.from(sel);
+      input.checked = sel.has(idx);
+      updateQuestionState();
     });
 
     const span = document.createElement("span");
@@ -1154,38 +1210,28 @@ function renderQuestion() {
   });
 
   els.top.textContent = `${current + 1}/${questions.length}`;
+  els.prev.disabled = current === 0;
+
+  updateQuestionState();
 }
-
-
-function autoCheck() {
-  const q = questions[current];
-  const selected = new Set(chosen[current]);
-
-  [...els.opts.children].forEach((li, idx) => {
-    if (q.correct.includes(idx)) li.classList.add("correct");
-    else if (selected.has(idx)) li.classList.add("wrong");
-  });
-
-  const ok =
-    q.correct.length === selected.size &&
-    q.correct.every(x => selected.has(x));
-
-  els.status.textContent = ok ? "✔ Правильно" : "✘ Ошибка";
-  els.status.className = ok ? "status ok" : "status bad";
-}
-
 
 els.next.addEventListener("click", () => {
-  autoCheck();        // ← проверяем сразу
-  setTimeout(() => {   // ← через паузу переключаемся
-    if (current < questions.length - 1) current++;
+  if (!isQuestionCorrect(current)) {
+    els.status.textContent = "Сначала выбери все правильные варианты без ошибок.";
+    els.status.className = "status bad";
+    return;
+  }
+  if (current < questions.length - 1) {
+    current++;
     renderQuestion();
-  }, 400);
+  }
 });
 
 els.prev.addEventListener("click", () => {
-  if (current > 0) current--;
-  renderQuestion();
+  if (current > 0) {
+    current--;
+    renderQuestion();
+  }
 });
 
 els.reset.addEventListener("click", () => {
@@ -1195,20 +1241,15 @@ els.reset.addEventListener("click", () => {
 
 els.checkAll.addEventListener("click", () => {
   let good = 0;
-
   questions.forEach((q, i) => {
     const sel = chosen[i] || [];
-    if (
-      sel.length === q.correct.length &&
-      q.correct.every(v => sel.includes(v))
-    ) {
+    if (sel.length === q.correct.length &&
+        q.correct.every(v => sel.includes(v))) {
       good++;
     }
   });
-
-  alert(`Ваш результат: ${good} из ${questions.length}`);
+  alert(`Твой результат: ${good} из ${questions.length}`);
 });
-
 
 renderQuestion();
 </script>
