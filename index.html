@@ -49,6 +49,8 @@
             background-color: var(--bg);
             color: var(--text-primary);
             min-height: 100vh;
+            /* ИСПРАВЛЕНИЕ: Дополнительно отключаем зум на уровне body */
+            touch-action: manipulation;
         }
 
         .container {
@@ -58,7 +60,6 @@
             padding: 20px 20px 140px 20px; /* Отступ для плавающего футера */
         }
 
-        /* --- ЭКРАНЫ --- */
         .screen {
             display: none;
             flex-direction: column;
@@ -66,338 +67,125 @@
             flex: 1;
             animation: fadeIn 0.3s ease-out;
         }
-        .screen.active {
-            display: flex;
-        }
+        .screen.active { display: flex; }
         
-        /* --- СТАРТОВЫЙ ЭКРАН --- */
-        .start-header {
-            margin: 40px 0;
-            text-align: center;
-        }
-        .start-header h1 {
-            font-size: 2.5rem;
-            font-weight: 800;
-            color: var(--text-primary);
-            margin-bottom: 10px;
-        }
-        .start-header p {
-            font-size: 1.1rem;
-            color: var(--text-secondary);
-            line-height: 1.6;
-        }
+        .start-header { margin: 40px 0; text-align: center; }
+        .start-header h1 { font-size: 2.5rem; font-weight: 800; color: var(--text-primary); margin-bottom: 10px; }
+        .start-header p { font-size: 1.1rem; color: var(--text-secondary); line-height: 1.6; }
         
-        .start-controls {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
+        .start-controls { display: flex; flex-direction: column; gap: 12px; }
         .menu-btn {
-            padding: 16px;
-            border: 2px solid var(--border);
-            border-radius: 12px;
-            font-size: 1rem;
-            font-weight: 500;
-            cursor: pointer;
-            background: var(--card-bg);
-            color: var(--text-primary);
-            text-align: left;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            transition: all 0.2s;
+            padding: 16px; border: 2px solid var(--border); border-radius: 12px; font-size: 1rem; font-weight: 500; cursor: pointer;
+            background: var(--card-bg); color: var(--text-primary); text-align: left;
+            display: flex; align-items: center; gap: 12px; transition: all 0.2s;
+            touch-action: manipulation; /* ИСПРАВЛЕНИЕ: Отключаем дабл-тап зум */
         }
-        .menu-btn:hover {
-            border-color: var(--accent);
-            background: var(--card-bg);
-            transform: translateY(-2px);
-            box-shadow: var(--shadow);
-        }
-        .menu-btn.primary {
-            background: var(--accent);
-            color: white;
-            border-color: var(--accent);
-            font-weight: 700;
-        }
-        .menu-btn.primary:hover {
-            background-color: var(--accent);
-            border-color: var(--accent);
-        }
-        .menu-btn i {
-            width: 20px;
-            text-align: center;
-            color: var(--text-secondary);
-        }
+        .menu-btn:hover { border-color: var(--accent); background: var(--card-bg); transform: translateY(-2px); box-shadow: var(--shadow); }
+        .menu-btn.primary { background: var(--accent); color: white; border-color: var(--accent); font-weight: 700; }
+        .menu-btn.primary:hover { background-color: var(--accent); border-color: var(--accent); }
+        .menu-btn i { width: 20px; text-align: center; color: var(--text-secondary); }
         .menu-btn:hover i { color: var(--accent); }
         .menu-btn.primary i { color: white; }
 
-        .top-settings {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+        .top-settings { display: flex; justify-content: space-between; align-items: center; }
+        .top-controls-group { display: flex; gap: 10px; }
+        .theme-toggle {
+            background: var(--card-bg); border: 2px solid var(--border); color: var(--text-secondary);
+            font-size: 1rem; cursor: pointer; border-radius: 50%; width: 40px; height: 40px;
+            display: flex; align-items: center; justify-content: center; text-decoration: none;
+            touch-action: manipulation; /* ИСПРАВЛЕНИЕ: Отключаем дабл-тап зум */
         }
-        /* ИЗМЕНЕНО: Группа для кнопок TG и Темы */
-        .top-controls-group {
-            display: flex;
-            gap: 10px;
-        }
-        .theme-toggle { /* Общий стиль для кнопок в углу */
-            background: var(--card-bg);
-            border: 2px solid var(--border);
-            color: var(--text-secondary);
-            font-size: 1rem;
-            cursor: pointer;
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            text-decoration: none; /* Убираем подчеркивание у ссылки TG */
-        }
-        .theme-toggle i {
-            font-size: 1.2rem;
-        }
-        .theme-toggle:hover {
-            color: var(--text-primary);
-            border-color: var(--text-primary);
-        }
-        /* Отдельный стиль для иконки TG */
-        .tg-icon {
-            color: var(--tg-color);
-            font-size: 1.1rem;
-        }
-        .theme-toggle:hover .tg-icon {
-            color: var(--tg-color);
-        }
+        .theme-toggle i { font-size: 1.2rem; }
+        .theme-toggle:hover { color: var(--text-primary); border-color: var(--text-primary); }
+        .tg-icon { color: var(--tg-color); font-size: 1.1rem; }
+        .theme-toggle:hover .tg-icon { color: var(--tg-color); }
         
         .progress-pill {
-            background: var(--card-bg);
-            padding: 6px 14px;
-            border-radius: 20px;
-            font-size: 0.9rem;
-            font-weight: 600;
-            border: 1px solid var(--border);
+            background: var(--card-bg); padding: 6px 14px; border-radius: 20px;
+            font-size: 0.9rem; font-weight: 600; border: 1px solid var(--border);
             color: var(--text-secondary);
         }
 
         /* --- ЭКРАН ТЕСТА --- */
         .quiz-card {
-            background: var(--card-bg);
-            border-radius: 20px;
-            box-shadow: var(--shadow);
-            padding: 25px;
-            width: 100%;
-            border: 1px solid var(--border);
-            margin-top: 20px;
+            background: var(--card-bg); border-radius: 20px; box-shadow: var(--shadow);
+            padding: 25px; width: 100%; border: 1px solid var(--border); margin-top: 20px;
         }
-        .q-id {
-            font-size: 0.9rem;
-            font-weight: 700;
-            color: var(--text-secondary);
-            margin-bottom: 8px;
-        }
-        .q-title {
-            font-size: 1.5rem;
-            font-weight: 700;
-            line-height: 1.4;
-            margin-bottom: 30px;
-            color: var(--text-primary);
-        }
+        .q-id { font-size: 0.9rem; font-weight: 700; color: var(--text-secondary); margin-bottom: 8px; }
+        .q-title { font-size: 1.5rem; font-weight: 700; line-height: 1.4; margin-bottom: 30px; color: var(--text-primary); }
         
-        .options-list {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
+        .options-list { display: flex; flex-direction: column; gap: 12px; }
         .option {
-            background: var(--bg);
-            border: 2px solid var(--bg);
-            padding: 16px;
-            border-radius: 12px;
-            cursor: pointer;
-            font-size: 1rem;
-            font-weight: 500;
-            line-height: 1.4;
-            transition: all 0.2s;
-            display: flex;
-            align-items: center;
-            gap: 15px;
+            background: var(--bg); border: 2px solid var(--bg); padding: 16px; border-radius: 12px; cursor: pointer;
+            font-size: 1rem; font-weight: 500; line-height: 1.4; transition: all 0.2s;
+            display: flex; align-items: center; gap: 15px;
+            touch-action: manipulation; /* ИСПРАВЛЕНИЕ: Отключаем дабл-тап зум */
         }
-        .option:hover:not(.disabled) {
-            border-color: var(--accent);
-        }
+        .option:hover:not(.disabled) { border-color: var(--accent); }
         
         .option-marker {
-            width: 24px;
-            height: 24px;
-            border-radius: 50%; /* Круглые маркеры */
-            border: 2px solid var(--border);
-            flex-shrink: 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: 0.2s;
-            position: relative;
+            width: 24px; height: 24px; border-radius: 50%; border: 2px solid var(--border);
+            flex-shrink: 0; display: flex; align-items: center; justify-content: center;
+            transition: 0.2s; position: relative;
         }
-        .option-marker i {
-            font-size: 12px;
-            color: white;
-            opacity: 0;
-            transition: 0.2s;
-        }
+        .option-marker i { font-size: 12px; color: white; opacity: 0; transition: 0.2s; }
 
-        /* Выбрано */
-        .option.selected:not(.disabled) {
-            border-color: var(--accent);
-            background: var(--accent-light);
-        }
-        .option.selected:not(.disabled) .option-marker {
-            background: var(--accent);
-            border-color: var(--accent);
-        }
-        .option.selected:not(.disabled) .option-marker i {
-            opacity: 1;
-            /* \f00c это FontAwesome "галочка" */
-            content: '\f00c'; 
-            font-family: "Font Awesome 6 Free";
-            font-weight: 900;
-        }
+        .option.selected:not(.disabled) { border-color: var(--accent); background: var(--accent-light); }
+        .option.selected:not(.disabled) .option-marker { background: var(--accent); border-color: var(--accent); }
+        .option.selected:not(.disabled) .option-marker i { opacity: 1; content: '\f00c'; font-family: "Font Awesome 6 Free"; font-weight: 900; }
 
-        /* Проверено */
-        .option.correct {
-            background: var(--success-light);
-            border-color: var(--success);
-            color: var(--text-primary);
-        }
-        .option.correct .option-marker {
-            background: var(--success);
-            border-color: var(--success);
-        }
-        .option.correct .option-marker i {
-            opacity: 1;
-            content: '\f00c';
-            font-family: "Font Awesome 6 Free";
-            font-weight: 900;
-        }
+        .option.correct { background: var(--success-light); border-color: var(--success); color: var(--text-primary); }
+        .option.correct .option-marker { background: var(--success); border-color: var(--success); }
+        .option.correct .option-marker i { opacity: 1; content: '\f00c'; font-family: "Font Awesome 6 Free"; font-weight: 900; }
         
-        .option.incorrect {
-            background: var(--error-light);
-            border-color: var(--error);
-            color: var(--text-primary);
-        }
-        .option.incorrect .option-marker {
-            background: var(--error);
-            border-color: var(--error);
-        }
-        .option.incorrect .option-marker i {
-            opacity: 1;
-             /* \f00d это FontAwesome "крестик" */
-            content: '\f00d';
-            font-family: "Font Awesome 6 Free";
-            font-weight: 900;
-        }
+        .option.incorrect { background: var(--error-light); border-color: var(--error); color: var(--text-primary); }
+        .option.incorrect .option-marker { background: var(--error); border-color: var(--error); }
+        .option.incorrect .option-marker i { opacity: 1; content: '\f00d'; font-family: "Font Awesome 6 Free"; font-weight: 900; }
 
-        .option.missed {
-            border: 2px dashed var(--success);
-            background: var(--success-light);
-            opacity: 0.8;
-        }
-        .option.disabled {
-            cursor: default;
-        }
+        .option.missed { border: 2px dashed var(--success); background: var(--success-light); opacity: 0.8; }
+        .option.disabled { cursor: default; }
 
         /* --- ФУТЕР --- */
         .quiz-footer {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            padding: 20px;
-            /* Плавающий эффект */
+            position: fixed; bottom: 0; left: 0; right: 0; padding: 20px;
             background: linear-gradient(180deg, rgba(255,255,255,0) 0%, var(--card-bg) 30%);
             border-top: 1px solid var(--border);
         }
-        [data-theme="dark"] .quiz-footer {
-            background: linear-gradient(180deg, rgba(0,0,0,0) 0%, var(--card-bg) 30%);
-        }
+        [data-theme="dark"] .quiz-footer { background: linear-gradient(180deg, rgba(0,0,0,0) 0%, var(--card-bg) 30%); }
 
         .quiz-footer .container { padding: 0; }
-        .controls {
-            display: grid;
-            grid-template-columns: 60px 1fr 60px;
-            gap: 15px;
-        }
+        .controls { display: grid; grid-template-columns: 60px 1fr 60px; gap: 15px; }
         .nav-btn {
-            height: 50px;
-            border-radius: 12px;
-            border: 1px solid var(--border);
-            cursor: pointer;
-            font-size: 1.2rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: var(--card-bg);
-            color: var(--text-primary);
-            box-shadow: var(--shadow);
+            height: 50px; border-radius: 12px; border: 1px solid var(--border); cursor: pointer;
+            font-size: 1.2rem; display: flex; align-items: center; justify-content: center;
+            background: var(--card-bg); color: var(--text-primary); box-shadow: var(--shadow);
+            touch-action: manipulation; /* ИСПРАВЛЕНИЕ: Отключаем дабл-тап зум */
         }
-        .nav-btn:hover:not(:disabled) {
-            background: var(--bg);
-            border-color: var(--accent);
-        }
-        .nav-btn:disabled {
-            opacity: 0.3;
-            cursor: not-allowed;
-            box-shadow: none;
-        }
+        .nav-btn:hover:not(:disabled) { background: var(--bg); border-color: var(--accent); }
+        .nav-btn:disabled { opacity: 0.3; cursor: not-allowed; box-shadow: none; }
         
         .action-btn {
-            height: 50px;
-            border-radius: 12px;
-            border: none;
-            cursor: pointer;
-            font-weight: 700;
-            font-size: 1rem;
-            color: white;
-            background: var(--accent);
-            box-shadow: var(--shadow);
+            height: 50px; border-radius: 12px; border: none; cursor: pointer;
+            font-weight: 700; font-size: 1rem; color: white;
+            background: var(--accent); box-shadow: var(--shadow);
+            touch-action: manipulation; /* ИСПРАВЛЕНИЕ: Отключаем дабл-тап зум */
         }
-        .action-btn:disabled {
-            background: var(--text-secondary);
-            box-shadow: none;
-            opacity: 0.5;
-        }
+        .action-btn:disabled { background: var(--text-secondary); box-shadow: none; opacity: 0.5; }
         .action-btn.correct { background: var(--success); }
         .action-btn.incorrect { background: var(--error); }
         .action-btn:active:not(:disabled) { transform: scale(0.98); }
 
         /* --- РЕЗУЛЬТАТЫ --- */
         .stat-box {
-            background: var(--card-bg);
-            border: 1px solid var(--border);
-            padding: 15px;
-            border-radius: 12px;
-            text-align: center;
-            box-shadow: var(--shadow);
+            background: var(--card-bg); border: 1px solid var(--border); padding: 15px;
+            border-radius: 12px; text-align: center; box-shadow: var(--shadow);
         }
-        .stat-val {
-            font-size: 1.8rem;
-            font-weight: 700;
-        }
-        .stat-label {
-            font-size: 0.9rem;
-            color: var(--text-secondary);
-        }
+        .stat-val { font-size: 1.8rem; font-weight: 700; }
+        .stat-label { font-size: 0.9rem; color: var(--text-secondary); }
         .stat-val.correct { color: var(--success); }
         .stat-val.error { color: var(--error); }
         
-        /* --- ИКОНКА TG (УБРАНА) --- */
-        /* .tg-fab { ... } */
-        
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     </style>
 </head>
 <body>
@@ -493,7 +281,6 @@
     
     <script>
         // --- БАЗА ДАННЫХ ВОПРОСОВ (902-992) ---
-        // *** ПОЛНЫЙ МАССИВ ИЗ 91 ВОПРОСА ***
         const fullQuizData = [
             {id:902,q:"Укажите особенности, характерные для полого органа:",opts:["имеет строму и паренхиму","имеет паренхиму и дольчатое строение","имеет внутреннюю полость и 3-х слойную стенку","имеет строму и внутреннюю полость"],correct:[2]},
             {id:903,q:"Укажите особенности, характерные для паренхиматозного органа:",opts:["имеет внутреннюю полость и 3-х слойную стенку","имеет паренхиму и дольчатое строение","имеет строму и паренхиму","имеет строму и внутреннюю полость"],correct:[1,2]},
@@ -593,7 +380,7 @@
         let currentIndex = 0;
         let userAnswers = {}; // { "902": { selected: Set, isSubmitted: bool, isCorrect: bool }, ... }
         let currentMode = 'default';
-        const storageKey = 'physio_quiz_progress_v8_pro';
+        const storageKey = 'physio_quiz_progress_v8_pro'; // Новая версия
 
         // --- DOM ЭЛЕМЕНТЫ ---
         const screens = {
@@ -635,6 +422,7 @@
             localStorage.setItem('gi_theme', newTheme);
             themeToggleBtns.forEach(btn => {
                 const icon = btn.querySelector('i');
+                // Меняем только иконку настроек (луна/солнце), иконку TG не трогаем
                 if (icon.classList.contains('fa-moon') || icon.classList.contains('fa-sun')) {
                     icon.className = 'fas ' + (newTheme === 'dark' ? 'fa-sun' : 'fa-moon');
                 }
@@ -710,16 +498,19 @@
             }
             const state = userAnswers[q.id];
 
+            // Обновляем текст
             progressPill.textContent = `${currentIndex + 1} / ${activeQuestions.length}`;
             qIdEl.textContent = `#${q.id}`;
             qTextEl.textContent = q.q;
 
+            // Анимация
             cardContainer.style.animation = 'none';
             if (!isFirstLoad) {
                 void cardContainer.offsetWidth; // Force reflow
                 cardContainer.style.animation = `fadeIn 0.3s ease-out`;
             }
 
+            // Рендер опций
             optionsList.innerHTML = '';
             q.opts.forEach((optText, idx) => {
                 const div = document.createElement('div');
