@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!DOCTYPE html> 
 <html lang="ru">
 <head>
   <meta charset="UTF-8" />
@@ -1170,12 +1170,9 @@ function updateQuestionState() {
     els.status.className = "status bad";
   }
 
-  // Кнопка "Вперёд" БОЛЬШЕ НЕ БЛОКИРУЕТСЯ
-  els.next.disabled = false;
-
+  // "Вперёд" доступна всегда, кроме последнего вопроса
+  els.next.disabled = (current === questions.length - 1);
   els.progress.textContent = `Вопрос ${current + 1} из ${questions.length}`;
-}
-
 }
 
 function renderQuestion() {
@@ -1195,8 +1192,7 @@ function renderQuestion() {
     input.type = "checkbox";
     input.checked = sel.has(idx);
 
-    li.addEventListener("click", (e) => {
-      // клик по всей строке
+    li.addEventListener("click", () => {
       if (sel.has(idx)) sel.delete(idx);
       else sel.add(idx);
       chosen[current] = Array.from(sel);
@@ -1220,13 +1216,12 @@ function renderQuestion() {
 }
 
 els.next.addEventListener("click", () => {
-  // НИЧЕГО не проверяем, просто переходим к следующему
+  // просто переходим к следующему вопросу, ничего не блокируем
   if (current < questions.length - 1) {
     current++;
     renderQuestion();
   }
 });
-
 
 els.prev.addEventListener("click", () => {
   if (current > 0) {
