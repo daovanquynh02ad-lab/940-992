@@ -3,27 +3,38 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Тренажер по Физиологии (902-992)</title>
+    <title>Физиология ЖКТ (902-992)</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
-            --bg-color: #F5F5F5;
+            --bg-color: #F3F4F6;
             --card-bg: #FFFFFF;
-            --border-color: #E0E0E0;
-            --text-primary: #000000; /* Черный для лучшей читаемости */
-            --text-secondary: #555555;
-            
-            --correct-bg: #2ECC71; 
-            --incorrect-bg: #FF6B6B;
-            --btn-blue: #007BFF;
-            --btn-hover: #0056b3;
-            --btn-gray: #F0F0F0;
-            --btn-gray-hover: #E0E0E0;
-            
+            --text-primary: #1F2937;
+            --text-secondary: #6B7280;
+            --accent: #4F46E5; /* Indigo */
+            --accent-hover: #4338CA;
+            --success: #10B981; /* Green */
+            --error: #EF4444; /* Red */
+            --border: #E5E7EB;
+            --shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
             --tg-color: #2481cc;
         }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Arial', sans-serif; }
+        /* --- ТЁМНАЯ ТЕМА --- */
+        [data-theme="dark"] {
+            --bg-color: #111827;
+            --card-bg: #1F2937;
+            --text-primary: #F9FAFB;
+            --text-secondary: #9CA3AF;
+            --accent: #6366F1;
+            --accent-hover: #818CF8;
+            --success: #059669;
+            --error: #DC2626;
+            --border: #374151;
+            --shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; transition: background-color 0.2s, color 0.2s, border-color 0.2s, opacity 0.2s; }
         
         body {
             background-color: var(--bg-color);
@@ -31,257 +42,435 @@
             min-height: 100vh;
             display: flex;
             flex-direction: column;
-            align-items: center;
-            padding: 20px 10px 80px 10px;
+            padding-bottom: 80px;
+            overflow-x: hidden;
         }
 
         .container {
-            max-width: 800px;
+            max-width: 700px;
             width: 100%;
+            margin: 0 auto;
+            padding: 20px;
+            flex: 1;
             display: flex;
             flex-direction: column;
-            gap: 15px;
         }
 
-        /* --- СТАРТОВЫЙ ЭКРАН --- */
-        .start-screen {
-            background: var(--card-bg);
-            border: 1px solid var(--border-color);
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-            padding: 25px;
-            text-align: center;
-            border-radius: 4px;
+        /* --- ВЕРХНЯЯ ПАНЕЛЬ --- */
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding: 0 5px;
         }
-        .start-screen h1 {
-            font-size: 1.8rem;
-            font-weight: bold;
-            color: #333;
-            margin-bottom: 10px;
-        }
-        .start-screen p {
-            font-size: 1rem;
+        .mode-toggle {
+            background: none;
+            border: none;
             color: var(--text-secondary);
-            margin-bottom: 25px;
-        }
-        .start-controls { display: flex; flex-direction: column; gap: 10px; }
-        .btn {
-            padding: 12px 16px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            background-color: var(--btn-gray);
-            color: #333;
+            font-size: 1.5rem;
             cursor: pointer;
-            font-size: 1rem;
-            font-weight: 600;
-            transition: all 0.2s ease;
-            text-align: center;
-            text-decoration: none;
+            padding: 5px;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
         }
-        .btn:hover { background-color: var(--btn-gray-hover); }
-        .btn-primary { background-color: var(--btn-blue); color: white; border-color: var(--btn-blue); }
-        .btn-primary:hover { background-color: var(--btn-hover); border-color: var(--btn-hover); }
-
-        /* --- ЭКРАН ТЕСТА --- */
-        .quiz-screen { display: none; /* Скрыт по умолчанию */ }
-        .quiz-card {
+        .mode-toggle:hover { background-color: var(--border); }
+        .progress-pill {
             background: var(--card-bg);
-            border: 1px solid var(--border-color);
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            border: 1px solid var(--border);
+            color: var(--text-secondary);
+        }
+
+        /* --- ЭКРАНЫ (СТАРТ, ТЕСТ, РЕЗУЛЬТАТ) --- */
+        .screen {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
             width: 100%;
+            flex: 1;
         }
-
-        .question-header {
+        .screen.active {
+            display: flex;
+            animation: fadeIn 0.4s ease-out;
+        }
+        
+        .hero-card {
+            background: var(--card-bg);
+            padding: 40px;
+            border-radius: 24px;
             text-align: center;
-            padding: 10px;
-            background-color: #E0E0E0;
-            border-bottom: 1px solid #999;
+            box-shadow: var(--shadow);
+            width: 100%;
+            border: 1px solid var(--border);
         }
-        .question-header h2 {
-            font-size: 1.2rem;
-            font-weight: bold;
-            color: var(--text-primary);
+        .hero-title {
+            font-size: 2rem;
+            margin-bottom: 10px;
+            background: linear-gradient(45deg, var(--accent), #a855f7);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 800;
         }
-
-        .question-text {
-            font-size: 1rem;
-            font-weight: bold;
-            line-height: 1.4;
-            padding: 10px 15px;
-            border-bottom: 1px solid var(--border-color);
+        .hero-text {
+            color: var(--text-secondary);
+            margin-bottom: 30px;
+            line-height: 1.6;
+            font-size: 1.1rem;
         }
-
-        .options-list { display: flex; flex-direction: column; }
-
-        .option-item {
+        
+        .menu-btn {
+            width: 100%;
+            padding: 16px;
+            margin-bottom: 12px;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.1s, box-shadow 0.2s;
             display: flex;
             align-items: center;
-            padding: 10px 15px;
-            border-bottom: 1px solid var(--border-color);
-            cursor: pointer;
-            transition: background-color 0.1s ease;
-            font-size: 1rem;
-        }
-        .option-item:last-child { border-bottom: none; }
-        
-        .option-item.selected:not(.submitted) {
-            background-color: #FFF2CC; /* Желтый фон при выборе */
-        }
-        
-        /* === ИСПРАВЛЕНИЕ === */
-        .option-number {
-            font-weight: normal;
-            margin-right: 10px;
-            min-width: 20px;
-            color: #000000; /* Четкий черный цвет для цифр */
-            transition: color 0.2s;
-        }
-        
-        .option-text {
-            color: var(--text-primary);
-            transition: color 0.2s;
-        }
-
-        /* Состояния после ответа */
-        .option-item.correct {
-            background-color: var(--correct-bg);
-        }
-        .option-item.incorrect {
-            background-color: var(--incorrect-bg);
-        }
-        
-        /* === ИСПРАВЛЕНИЕ === */
-        /* Цифры и текст становятся белыми на цветном фоне */
-        .option-item.correct .option-number,
-        .option-item.correct .option-text,
-        .option-item.incorrect .option-number,
-        .option-item.incorrect .option-text {
-            color: white;
-        }
-        
-        .option-item.missed {
-            outline: 2px dashed var(--correct-bg);
-            outline-offset: -2px;
-            background: #f0fff4;
-        }
-        
-        .option-item.submitted { cursor: default; }
-
-        .controls {
-            display: flex;
             justify-content: center;
             gap: 10px;
-            padding: 15px;
-            background-color: #f9f9f9;
-            border-top: 1px solid var(--border-color);
         }
-        .btn-nav {
-            padding: 8px 16px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            background-color: #fff;
-            color: #333;
+        .btn-primary {
+            background: var(--accent);
+            color: white;
+            box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+        }
+        .btn-primary:active { transform: scale(0.98); }
+        .btn-outline {
+            background: transparent;
+            border: 2px solid var(--border);
+            color: var(--text-primary);
+        }
+        .btn-outline:hover {
+            background: var(--bg-color);
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+
+        /* --- КАРТОЧКА ВОПРОСА --- */
+        .quiz-card {
+            background: var(--card-bg);
+            border-radius: 20px;
+            box-shadow: var(--shadow);
+            padding: 25px;
+            width: 100%;
+            border: 1px solid var(--border);
+            position: relative;
+        }
+        
+        .q-meta {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .q-text {
+            font-size: 1.25rem;
+            font-weight: 700;
+            line-height: 1.4;
+            margin-bottom: 25px;
+            color: var(--text-primary);
+        }
+
+        .options-list { display: flex; flex-direction: column; gap: 12px; }
+        
+        .option {
+            background: var(--bg-color);
+            border: 2px solid var(--border);
+            padding: 16px;
+            border-radius: 12px;
             cursor: pointer;
-            font-size: 0.9rem;
-            min-width: 100px;
+            font-size: 1rem;
+            transition: all 0.2s;
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            position: relative;
         }
-        .btn-nav:hover:not(:disabled) { background-color: #e6e6e6; }
-        .btn-nav:disabled { opacity: 0.5; cursor: not-allowed; }
-        .btn-action {
-            background-color: var(--btn-blue);
+        .option:hover:not(.disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            border-color: var(--accent);
+        }
+        .option.selected:not(.disabled) {
+            border-color: var(--accent);
+            background: rgba(79, 70, 229, 0.05);
+        }
+        
+        /* Состояния после ответа */
+        .option.correct {
+            background: var(--success);
             color: white;
-            border-color: var(--btn-blue);
+            border-color: var(--success);
+        }
+        .option.incorrect {
+            background: var(--error);
+            color: white;
+            border-color: var(--error);
+        }
+        .option.missed {
+            border: 2px dashed var(--success);
+            background: transparent;
+            opacity: 0.8;
+        }
+        .option.missed:hover {
+             transform: none;
+             box-shadow: none;
+        }
+        .option.disabled {
+            cursor: default;
+            pointer-events: none;
+        }
+        
+        .option-marker {
+            min-width: 24px;
+            height: 24px;
+            border-radius: 6px;
+            border: 2px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-top: 2px;
+            font-size: 14px;
             font-weight: bold;
-        }
-        .btn-action:hover:not(:disabled) { background-color: var(--btn-hover); }
-
-        /* --- ЭКРАН РЕЗУЛЬТАТОВ --- */
-        .result-screen {
-            display: none;
-            text-align: center;
-        }
-        .result-score { font-size: 3rem; font-weight: bold; color: var(--btn-blue); margin: 20px 0; }
-        .result-message { font-size: 1.1rem; margin-bottom: 25px; }
-
-        /* --- ИКОНКА TG --- */
-        .tg-float {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            background-color: var(--tg-color);
             color: white;
-            width: 50px;
+            transition: 0.2s;
+        }
+        /* Маркеры до ответа */
+        .option.selected:not(.disabled) .option-marker {
+            background: var(--accent);
+            border-color: var(--accent);
+        }
+        .option.selected:not(.disabled) .option-marker::after {
+            content: '✓';
+        }
+        
+        /* Маркеры после ответа */
+        .option.correct .option-marker { background: white; color: var(--success); border-color: white; }
+        .option.correct .option-marker::after { content: '✓'; }
+        
+        .option.incorrect .option-marker { background: white; color: var(--error); border-color: white; }
+        .option.incorrect .option-marker::after { content: '✕'; }
+
+        .option.missed .option-marker { border-color: var(--success); }
+
+
+        /* --- КНОПКИ УПРАВЛЕНИЯ --- */
+        .controls {
+            display: grid;
+            grid-template-columns: 60px 1fr 60px;
+            gap: 15px;
+            margin-top: 25px;
+        }
+        .nav-btn {
             height: 50px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            cursor: pointer;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--card-bg);
+            color: var(--text-primary);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            transition: 0.2s;
+        }
+        .nav-btn:hover:not(:disabled) { background: var(--bg-color); border-color: var(--accent); }
+        .nav-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+        
+        .action-btn {
+            height: 50px;
+            border-radius: 12px;
+            border: none;
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 1rem;
+            background: var(--accent);
+            color: white;
+            box-shadow: 0 4px 10px rgba(79, 70, 229, 0.3);
+            transition: 0.2s;
+        }
+        .action-btn:active:not(:disabled) { transform: scale(0.95); }
+        .action-btn:disabled { background: var(--text-secondary); box-shadow: none; }
+
+        /* --- ИКОНКА TELEGRAM --- */
+        .tg-fab {
+            position: fixed;
+            bottom: 25px;
+            right: 25px;
+            width: 55px;
+            height: 55px;
+            background: var(--tg-color);
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 24px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
-            text-decoration: none;
+            color: white;
+            font-size: 28px;
+            box-shadow: 0 5px 20px rgba(36, 129, 204, 0.4);
             z-index: 100;
+            text-decoration: none;
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
-        .tg-float:hover { transform: scale(1.1); }
+        .tg-fab:hover { transform: scale(1.1) rotate(-10deg); }
+
+        /* --- ЭКРАН РЕЗУЛЬТАТОВ --- */
+        .score-circle {
+            width: 140px;
+            height: 140px;
+            border-radius: 50%;
+            margin: 0 auto 25px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            font-weight: 800;
+            color: var(--accent);
+            background: var(--bg-color);
+            border: 8px solid var(--accent);
+        }
+        .result-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            width: 100%;
+            margin-bottom: 30px;
+        }
+        .stat-box {
+            background: var(--bg-color);
+            padding: 15px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+        }
+        .stat-val {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+        .stat-label {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+        }
+        .stat-val.correct { color: var(--success); }
+        .stat-val.error { color: var(--error); }
+
+
+        /* --- АНИМАЦИИ --- */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .slide-in-right { animation: slideInRight 0.3s forwards cubic-bezier(0.25, 0.46, 0.45, 0.94); }
+        .slide-in-left { animation: slideInLeft 0.3s forwards cubic-bezier(0.25, 0.46, 0.45, 0.94); }
+        
+        @keyframes slideInRight {
+            from { opacity: 0; transform: translateX(30px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+        @keyframes slideInLeft {
+            from { opacity: 0; transform: translateX(-30px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
     </style>
 </head>
 <body>
 
     <div class="container">
-        
-        <div class="start-screen" id="start-screen">
-            <h1>Тренажер по Физиологии</h1>
-            <p>Вопросы №902–992 (ЖКТ)</p>
-            <div class="start-controls">
-                <button class="btn btn-primary" onclick="startQuiz('default')">
-                    <i class="fas fa-play" style="margin-right: 8px;"></i> Начать тест
-                </button>
-                <button class="btn" onclick="startQuiz('shuffle')">
-                    <i class="fas fa-random" style="margin-right: 8px;"></i> Перемешать вопросы
-                </button>
-                <button class="btn" id="resume-btn" style="display: none;" onclick="startQuiz('resume')">
-                    <i class="fas fa-history" style="margin-right: 8px;"></i> Продолжить
-                </button>
-            </div>
+        <div class="top-bar">
+            <div class="progress-pill" id="top-progress" style="display:none">1 / 91</div>
+            <button class="mode-toggle" onclick="toggleTheme()" id="theme-toggle-btn">
+                <i class="fas fa-moon"></i>
+            </button>
         </div>
 
-        <div class="quiz-screen" id="quiz-screen">
-            <div class="quiz-card">
-                <div class="question-header">
-                    <h2>Задание №<span id="question-id">902</span>
-                        (<span id="current-q-num">1</span> из <span id="total-q-num">91</span>)
-                    </h2>
+        <div id="start-screen" class="screen active">
+            <div class="hero-card">
+                <div class="hero-title">Тренажер по Физиологии</div>
+                <p class="hero-text">Вопросы 902–992<br>ЖКТ</p>
+                
+                <div id="resume-block" style="display:none">
+                    <button class="menu-btn btn-primary" onclick="startQuiz('resume')">
+                        <i class="fas fa-play"></i> Продолжить
+                    </button>
+                    <div style="height: 10px;"></div>
                 </div>
-                <div class="question-text" id="question-text">Загрузка вопроса...</div>
-                <div class="options-list" id="options-area"></div>
-                <div class="controls">
-                    <button class="btn btn-nav" id="prev-btn" onclick="goToPrev()">← Назад</button>
-                    <button class="btn btn-nav btn-action" id="action-btn" onclick="checkAnswer()">Ответить</button>
-                    <button class="btn btn-nav" id="next-btn" onclick="goToNext()">Вперед →</button>
+
+                <button class="menu-btn btn-outline" onclick="startQuiz('new')">
+                    <i class="fas fa-redo"></i> Начать заново
+                </button>
+                <button class="menu-btn btn-outline" onclick="startQuiz('shuffle')">
+                    <i class="fas fa-random"></i> Случайный порядок
+                </button>
+            </div>
+        </div>
+
+        <div id="quiz-screen" class="screen">
+            <div class="quiz-card" id="card-container">
+                <div class="q-meta">
+                    <span id="q-id-display">#902</span>
+                    <span>Множественный выбор</span>
                 </div>
+                <div class="q-text" id="q-text">Загрузка...</div>
+                <div class="options-list" id="options-list"></div>
+            </div>
+
+            <div class="controls">
+                <button class="nav-btn" id="prev-btn" onclick="prevQ()"><i class="fas fa-chevron-left"></i></button>
+                <button class="action-btn" id="main-btn" onclick="checkAnswer()">Ответить</button>
+                <button class="nav-btn" id="next-btn" onclick="nextQ()"><i class="fas fa-chevron-right"></i></button>
             </div>
         </div>
 
-        <div class="start-screen result-screen" id="result-screen">
-            <h2>Тест завершен!</h2>
-            <div class="result-score" id="final-score">0%</div>
-            <p class="result-message">Верно: <span id="correct-count">0</span> / <span id="total-count">0</span></p>
-            <div class="start-controls">
-                <button class="btn" id="mistakes-btn" style="display: none;" onclick="startQuiz('mistakes')">
-                    <i class="fas fa-redo" style="margin-right: 8px;"></i> Работа над ошибками
+        <div id="result-screen" class="screen">
+            <div class="hero-card">
+                <h2 class="hero-title">Финиш!</h2>
+                <div class="score-circle" id="final-score">85%</div>
+                
+                <div class="result-stats">
+                    <div class="stat-box">
+                        <div class="stat-val correct" id="correct-val">0</div>
+                        <div class="stat-label">Верно</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-val error" id="error-val">0</div>
+                        <div class="stat-label">Ошибки</div>
+                    </div>
+                </div>
+
+                <button class="menu-btn btn-primary" id="mistakes-btn" onclick="startQuiz('mistakes')" style="display:none">
+                    <i class="fas fa-bug"></i> Работа над ошибками
                 </button>
-                <button class="btn btn-primary" onclick="location.reload()">
-                    <i class="fas fa-home" style="margin-right: 8px;"></i> В начало
+                <button class="menu-btn btn-outline" onclick="location.reload()">
+                    <i class="fas fa-home"></i> В главное меню
                 </button>
             </div>
         </div>
-
     </div>
 
-    <a href="https://t.me/stewonly" target="_blank" class="tg-float">
+    <a href="https://t.me/stewonly" target="_blank" class="tg-fab">
         <i class="fab fa-telegram-plane"></i>
     </a>
 
     <script>
-        // --- БАЗА ВОПРОСОВ (902-992) ---
+        // --- БАЗА ДАННЫХ ВОПРОСОВ (902-992) ---
         const fullQuizData = [
             {id:902,q:"Укажите особенности, характерные для полого органа:",opts:["имеет строму и паренхиму","имеет паренхиму и дольчатое строение","имеет внутреннюю полость и 3-х слойную стенку","имеет строму и внутреннюю полость"],correct:[2]},
             {id:903,q:"Укажите особенности, характерные для паренхиматозного органа:",opts:["имеет внутреннюю полость и 3-х слойную стенку","имеет паренхиму и дольчатое строение","имеет строму и паренхиму","имеет строму и внутреннюю полость"],correct:[1,2]},
@@ -377,11 +566,11 @@
         ];
 
         // --- ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ---
-        let activeQuestions = []; // Массив вопросов для текущей сессии
+        let activeQuestions = []; // Активный массив вопросов (может быть перемешан или отфильтрован)
         let currentIndex = 0;
         let userAnswers = {}; // { "902": { selected: Set, isSubmitted: bool, isCorrect: bool }, ... }
         let currentMode = 'default';
-        const storageKey = 'physio_quiz_progress_v2'; // v2, чтобы сбросить старое хранилище
+        const storageKey = 'physio_quiz_progress_v3';
 
         // --- DOM ЭЛЕМЕНТЫ ---
         const screens = {
@@ -389,65 +578,89 @@
             quiz: document.getElementById('quiz-screen'),
             result: document.getElementById('result-screen')
         };
+        const topProgress = document.getElementById('top-progress');
         const resumeBtn = document.getElementById('resume-btn');
-        const qIdEl = document.getElementById('question-id');
-        const qTextEl = document.getElementById('question-text');
-        const currentQNumEl = document.getElementById('current-q-num');
-        const totalQNumEl = document.getElementById('total-q-num');
-        const optionsAreaEl = document.getElementById('options-area');
+        const cardContainer = document.getElementById('card-container');
+        const qIdDisplay = document.getElementById('q-id-display');
+        const qTextEl = document.getElementById('q-text');
+        const optionsList = document.getElementById('options-area');
         const prevBtn = document.getElementById('prev-btn');
+        const mainBtn = document.getElementById('main-btn');
         const nextBtn = document.getElementById('next-btn');
-        const actionBtn = document.getElementById('action-btn');
+        const themeToggleBtn = document.getElementById('theme-toggle-btn');
+        const mistakesBtn = document.getElementById('mistakes-btn');
 
         // --- ИНИЦИАЛИЗАЦИЯ ---
         document.addEventListener('DOMContentLoaded', () => {
+            loadTheme();
             if (localStorage.getItem(storageKey)) {
                 resumeBtn.style.display = 'block';
             }
         });
 
-        // --- ЛОГИКА СТАРТА ---
+        // --- ЛОГИКА ТЕМЫ ---
+        function toggleTheme() {
+            const currentTheme = document.body.getAttribute('data-theme');
+            if (currentTheme === 'dark') {
+                document.body.removeAttribute('data-theme');
+                localStorage.setItem('gi_theme', 'light');
+                themeToggleBtn.innerHTML = '<i class="fas fa-moon"></i>';
+            } else {
+                document.body.setAttribute('data-theme', 'dark');
+                localStorage.setItem('gi_theme', 'dark');
+                themeToggleBtn.innerHTML = '<i class="fas fa-sun"></i>';
+            }
+        }
+
+        function loadTheme() {
+            if (localStorage.getItem('gi_theme') === 'dark') {
+                document.body.setAttribute('data-theme', 'dark');
+                if (themeToggleBtn) themeToggleBtn.innerHTML = '<i class="fas fa-sun"></i>';
+            } else {
+                if (themeToggleBtn) themeToggleBtn.innerHTML = '<i class="fas fa-moon"></i>';
+            }
+        }
+
+        // --- ЛОГИКА СТАРТА ТЕСТА ---
         function startQuiz(mode) {
             currentMode = mode;
             
             if (mode === 'resume') {
-                if (!loadProgress()) { // Если загрузка не удалась
-                    alert("Сохраненные данные не найдены или повреждены. Начинаем заново.");
-                    startQuiz('default');
+                if (!loadProgress()) {
+                    alert("Сохраненные данные не найдены. Начинаем заново.");
+                    startQuiz('new');
                     return;
                 }
             } else if (mode === 'mistakes') {
-                // Собираем ID вопросов, на которые ответили неправильно в ПОСЛЕДНЕЙ сессии
                 const mistakeIDs = Object.keys(userAnswers).filter(id => !userAnswers[id].isCorrect);
                 if (mistakeIDs.length === 0) {
                      alert("Нет ошибок для работы! Поздравляем!");
                      return;
                 }
-                // Фильтруем ПОЛНЫЙ список, чтобы получить объекты вопросов
                 activeQuestions = fullQuizData.filter(q => mistakeIDs.includes(q.id.toString()));
                 currentIndex = 0;
-                userAnswers = {}; // Сбрасываем ответы для режима "Работа над ошибками"
-            
-            } else { // 'default' or 'shuffle'
+                userAnswers = {}; // Сбрасываем ответы для нового прогона
+            } else { // 'new' or 'shuffle'
                 activeQuestions = [...fullQuizData];
                 if (mode === 'shuffle') {
                     // Перемешиваем вопросы
-                    activeQuestions.sort(() => Math.random() - 0.5);
+                    shuffleArray(activeQuestions);
                     // И перемешиваем варианты в каждом вопросе
                     activeQuestions.forEach(q => {
-                        // Создаем массив пар [индекс, текст]
-                        let optionsWithOriginalIndex = q.opts.map((opt, i) => ({ text: opt, originalIndex: i }));
+                        // Сохраняем оригинальные индексы правильных ответов
+                        const correctOriginalIndices = q.correct;
+                        
+                        // Создаем массив объектов {текст, оригинальный_индекс}
+                        let optionsToShuffle = q.opts.map((opt, i) => ({ text: opt, originalIndex: i }));
+                        
                         // Перемешиваем
-                        optionsWithOriginalIndex.sort(() => Math.random() - 0.5);
-                        // Обновляем опции
-                        q.opts = optionsWithOriginalIndex.map(item => item.text);
-                        // Обновляем правильные ответы, чтобы они соответствовали НОВЫМ индексам
-                        let newCorrect = [];
-                        q.correct.forEach(correctIdx => {
-                            let newIndex = optionsWithOriginalIndex.findIndex(item => item.originalIndex === correctIdx);
-                            newCorrect.push(newIndex);
-                        });
-                        q.correct = newCorrect;
+                        shuffleArray(optionsToShuffle);
+                        
+                        // Обновляем опции и правильные ответы
+                        q.opts = optionsToShuffle.map(item => item.text);
+                        q.correct = correctOriginalIndices.map(originalIdx => 
+                            optionsToShuffle.findIndex(item => item.originalIndex === originalIdx)
+                        );
                     });
                 }
                 currentIndex = 0;
@@ -455,34 +668,41 @@
                 localStorage.removeItem(storageKey);
             }
 
-            screens.start.style.display = 'none';
-            screens.result.style.display = 'none';
-            screens.quiz.style.display = 'block';
-            
-            totalQNumEl.textContent = activeQuestions.length;
-            renderQuestion();
+            switchScreen('quiz');
+            renderQuestion(true); // true = первая загрузка, без анимации "вправо"
         }
 
         // --- ЛОГИКА РЕНДЕРА ВОПРОСА ---
-        function renderQuestion() {
+        function renderQuestion(isFirstLoad = false, direction = 'right') {
             const q = activeQuestions[currentIndex];
             if (!q) return;
 
-            // Инициализируем состояние, если его нет
             if (!userAnswers[q.id]) {
                 userAnswers[q.id] = { selected: new Set(), isSubmitted: false, isCorrect: false };
             }
             const state = userAnswers[q.id];
 
-            // Обновляем UI
-            qIdEl.textContent = q.id;
+            // Обновляем текст
+            if (topProgress) topProgress.textContent = `${currentIndex + 1} / ${activeQuestions.length}`;
+            document.getElementById('question-id').textContent = q.id;
+            document.getElementById('current-q-num').textContent = currentIndex + 1;
+            document.getElementById('total-q-num').textContent = activeQuestions.length;
             qTextEl.textContent = q.q;
-            currentQNumEl.textContent = currentIndex + 1;
 
-            optionsAreaEl.innerHTML = '';
+            // Анимация
+            cardContainer.classList.remove('slide-in-right', 'slide-in-left');
+            if (!isFirstLoad) {
+                void cardContainer.offsetWidth; // Force reflow
+                cardContainer.classList.add(direction === 'right' ? 'slide-in-right' : 'slide-in-left');
+            }
+
+            // Рендер опций
+            optionsList.innerHTML = '';
             q.opts.forEach((optText, idx) => {
                 const div = document.createElement('div');
                 div.className = 'option-item';
+                
+                // Создаем структуру: номер + текст
                 div.innerHTML = `<span class="option-number">${idx + 1}.</span><span class="option-text">${optText}</span>`;
 
                 if (state.isSubmitted) {
@@ -501,7 +721,7 @@
                     }
                     div.onclick = () => toggleOption(q.id, idx);
                 }
-                optionsAreaEl.appendChild(div);
+                optionsList.appendChild(div);
             });
             
             updateControls(state);
@@ -511,13 +731,17 @@
             const state = userAnswers[qId];
             if (state.isSubmitted) return;
 
-            // Как в ПДД, можно выбрать несколько, поэтому это всегда Set
-            if (state.selected.has(idx)) {
-                state.selected.delete(idx);
-            } else {
-                state.selected.add(idx);
-            }
-            renderQuestion(); // Перерисовываем для обновления стилей
+            if (state.selected.has(idx)) state.selected.delete(idx);
+            else state.selected.add(idx);
+            
+            // Перерисовываем только опции, а не всю карточку
+            const options = document.querySelectorAll('.option-item');
+            options.forEach((opt, i) => {
+                if (i === idx) opt.classList.toggle('selected');
+            });
+            
+            // Обновляем состояние кнопки
+            updateControls(state);
         }
 
         // --- ЛОГИКА КНОПОК ---
@@ -525,12 +749,12 @@
             prevBtn.disabled = (currentIndex === 0);
             
             if (state.isSubmitted) {
-                actionBtn.textContent = "Отвечено";
-                actionBtn.disabled = true;
+                mainBtn.textContent = "Отвечено";
+                mainBtn.disabled = true;
                 nextBtn.disabled = false;
             } else {
-                actionBtn.textContent = "Ответить";
-                actionBtn.disabled = (state.selected.size === 0);
+                mainBtn.textContent = "Ответить";
+                mainBtn.disabled = (state.selected.size === 0);
                 nextBtn.disabled = true; // Нельзя перелистнуть, не ответив
             }
 
@@ -554,32 +778,38 @@
             const correctArr = [...q.correct].sort();
             state.isCorrect = JSON.stringify(userArr) === JSON.stringify(correctArr);
             
-            // Сохраняем прогресс только если это не режим "работы над ошибками"
-            if (currentMode !== 'mistakes') {
-                saveProgress();
-            }
-            renderQuestion();
+            if (currentMode !== 'mistakes') saveProgress();
+            
+            renderQuestion(false, 'right'); // Перерисовать с цветами
         }
 
-        function goToNext() {
+        function nextQ() {
             if (currentIndex < activeQuestions.length - 1) {
                 currentIndex++;
-                renderQuestion();
+                renderQuestion(false, 'right');
             }
         }
+
+        function goToNext() { nextQ(); }
 
         function goToPrev() {
             if (currentIndex > 0) {
                 currentIndex--;
-                renderQuestion();
+                renderQuestion(false, 'left');
             }
+        }
+
+        // --- НАВИГАЦИЯ ПО ЭКРАНАМ ---
+        function switchScreen(name) {
+            Object.values(screens).forEach(s => s.style.display = 'none');
+            screens[name].style.display = 'block';
+            if (name === 'quiz' && topProgress) topProgress.style.display = 'block';
+            else if (topProgress) topProgress.style.display = 'none';
         }
 
         // --- РЕЗУЛЬТАТЫ И СОХРАНЕНИЕ ---
         function showResults() {
             let correctCount = 0;
-            // Считаем по `activeQuestions`, а не `userAnswers`, т.к. в `userAnswers`
-            // могут быть ответы из прошлой сессии (для "Работы над ошибками")
             activeQuestions.forEach(q => {
                 if(userAnswers[q.id] && userAnswers[q.id].isCorrect) {
                     correctCount++;
@@ -594,26 +824,20 @@
             document.getElementById('total-count').textContent = total;
 
             const mistakesBtn = document.getElementById('mistakes-btn');
-            // Показываем кнопку "Работа над ошибками" если:
-            // 1. Были ошибки (correctCount < total)
-            // 2. Это НЕ был сам режим "Работы над ошибками"
             if (correctCount < total && currentMode !== 'mistakes') {
-                mistakesBtn.style.display = 'block';
+                mistakesBtn.style.display = 'inline-block';
             } else {
                 mistakesBtn.style.display = 'none';
             }
 
-            screens.quiz.style.display = 'none';
-            screens.result.style.display = 'block';
+            switchScreen('result');
             
-            // Очищаем сохранение, если это был основной режим (не работа над ошибками)
             if (currentMode !== 'mistakes') {
                 localStorage.removeItem(storageKey);
             }
         }
 
         function saveProgress() {
-            // Конвертируем Set в Array для JSON
             const serializableAnswers = {};
             for (const id in userAnswers) {
                 serializableAnswers[id] = {
@@ -625,7 +849,7 @@
             const progress = {
                 currentMode: currentMode,
                 currentIndex: currentIndex,
-                questionOrder: activeQuestions.map(q => q.id), // Сохраняем порядок (важно для shuffle)
+                questionOrder: activeQuestions.map(q => q.id),
                 answers: serializableAnswers
             };
             localStorage.setItem(storageKey, JSON.stringify(progress));
@@ -638,13 +862,10 @@
             currentMode = savedData.currentMode;
             currentIndex = savedData.currentIndex;
             
-            // Восстанавливаем порядок вопросов
-            // (Это важно, если был 'shuffle')
             activeQuestions = savedData.questionOrder.map(id => 
                 fullQuizData.find(q => q.id === id)
             );
             
-            // Восстанавливаем ответы и Set'ы
             userAnswers = savedData.answers;
             for (const id in userAnswers) {
                 userAnswers[id].selected = new Set(userAnswers[id].selected);
@@ -652,6 +873,13 @@
             return true;
         }
 
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+        }
+        
     </script>
 </body>
 </html>
