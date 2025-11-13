@@ -1301,9 +1301,21 @@ function checkAll() {
     `На ${answeredCount} вопросов ты хотя бы что-то ответил.`;
 }
 
-els.prev.addEventListener("click", () => {
-  if (current > 0) {
-    current--;
+let answeredThisQuestion = false;
+
+els.next.addEventListener("click", () => {
+
+  // 1 — если ещё не проверяли вопрос → проверяем
+  if (!answeredThisQuestion) {
+    checkAnswer();
+    answeredThisQuestion = true;
+    return; // НЕ переходим вперёд сразу
+  }
+
+  // 2 — если уже проверено → переходим к следующему
+  if (current < questions.length - 1) {
+    current++;
+    answeredThisQuestion = false; // сбрасываем на новый вопрос
     renderQuestion();
   }
 });
