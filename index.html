@@ -7,90 +7,196 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
-            --primary: #2563EB;
-            --primary-dark: #1e40af;
-            --success: #10B981;
-            --error: #EF4444;
-            --bg: #F3F4F6;
-            --card: #ffffff;
-            --text: #1F2937;
+            --primary-bg: #F5F5F5; /* Светлый фон всей страницы */
+            --card-bg: #FFFFFF; /* Фон блока вопроса */
+            --border-color: #E0E0E0; /* Цвет границ */
+            --text-color: #333333; /* Основной цвет текста */
+            --question-color: #000000; /* Цвет текста вопроса */
+            --selected-highlight: #FFF2CC; /* Желтая подсветка выбранного ответа */
+            --selected-border: #FFD633; /* Желтая рамка выбранного ответа */
+            --correct-bg: #D4EDDA; /* Зеленый фон для правильного ответа */
+            --correct-border: #28A745; /* Зеленая рамка */
+            --incorrect-bg: #F8D7DA; /* Красный фон для неправильного ответа */
+            --incorrect-border: #DC3545; /* Красная рамка */
+            --button-bg: #007BFF; /* Синий для кнопок */
+            --button-text: #FFFFFF;
+            --button-hover: #0056b3;
+            --nav-button-bg: #F0F0F0;
+            --nav-button-text: #555555;
+            --nav-button-hover: #E0E0E0;
             --tg-color: #2481cc;
         }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; }
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* Похожий на системный шрифт */
+        }
         
-        body { background-color: var(--bg); color: var(--text); min-height: 100vh; display: flex; flex-direction: column; padding-bottom: 80px; /* место для футера */ }
-
-        .container { max-width: 800px; width: 100%; margin: 0 auto; padding: 20px; flex-grow: 1; display: flex; flex-direction: column; }
-
-        /* Header */
-        header { background: var(--card); padding: 15px 20px; border-radius: 16px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; }
-        h1 { font-size: 1.2rem; color: var(--primary); }
-        .progress-text { font-weight: 600; color: #6B7280; font-size: 0.9rem; }
-
-        /* Progress Bar */
-        .progress-track { width: 100%; background-color: #E5E7EB; height: 6px; border-radius: 10px; margin-bottom: 20px; overflow: hidden; }
-        .progress-fill { height: 100%; background-color: var(--primary); width: 0%; transition: width 0.3s ease; }
-
-        /* Question Card */
-        .card { background: var(--card); border-radius: 16px; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); padding: 20px; flex-grow: 1; display: flex; flex-direction: column; position: relative; overflow: hidden; }
-        
-        .question-badge { display: inline-block; background: #DBEAFE; color: var(--primary-dark); padding: 4px 10px; border-radius: 6px; font-size: 0.8rem; font-weight: bold; margin-bottom: 15px; }
-        .question-text { font-size: 1.15rem; font-weight: 600; line-height: 1.5; margin-bottom: 20px; }
-
-        /* Options */
-        .options-grid { display: flex; flex-direction: column; gap: 12px; margin-bottom: 20px; }
-        
-        .option-item {
-            background: #fff; border: 2px solid #E5E7EB; padding: 15px; border-radius: 12px; cursor: pointer; transition: all 0.2s; font-size: 1rem; position: relative; display: flex; align-items: flex-start; gap: 10px;
-            -webkit-tap-highlight-color: transparent;
+        body {
+            background-color: var(--primary-bg);
+            color: var(--text-color);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px 0 80px 0; /* Место для футера */
         }
 
-        .option-item:active { transform: scale(0.98); }
-        
-        /* Checkbox simulation */
-        .checkbox { width: 20px; height: 20px; border: 2px solid #D1D5DB; border-radius: 4px; flex-shrink: 0; margin-top: 2px; display: flex; align-items: center; justify-content: center; transition: 0.2s; }
-        .option-item.selected { border-color: var(--primary); background: #EFF6FF; }
-        .option-item.selected .checkbox { background: var(--primary); border-color: var(--primary); }
-        .checkbox::after { content: '✓'; color: white; font-size: 14px; display: none; }
-        .option-item.selected .checkbox::after { display: block; }
+        .container {
+            max-width: 700px; /* Немного шире для лучшего отображения */
+            width: 100%;
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            padding: 25px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
 
-        /* States after check */
-        .option-item.correct { border-color: var(--success); background-color: #ECFDF5; }
-        .option-item.correct .checkbox { background: var(--success); border-color: var(--success); }
-        
-        .option-item.incorrect { border-color: var(--error); background-color: #FEF2F2; }
-        .option-item.incorrect .checkbox { background: var(--error); border-color: var(--error); }
-        .option-item.incorrect .checkbox::after { content: '✕'; }
+        /* Question Header */
+        .question-header {
+            text-align: center;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--border-color);
+            margin-bottom: 20px;
+        }
+        .question-header h2 {
+            font-size: 1.6rem;
+            font-weight: normal;
+            margin-bottom: 10px;
+            color: var(--question-color);
+        }
+        .question-info {
+            font-size: 0.9rem;
+            color: #777;
+        }
 
-        .option-item.missed { border-color: var(--success); border-style: dashed; opacity: 0.8; }
+        /* Question Text */
+        .question-text {
+            font-size: 1.1rem;
+            font-weight: 500;
+            line-height: 1.6;
+            margin-bottom: 20px;
+            color: var(--question-color);
+        }
 
-        /* Navigation Buttons */
-        .nav-controls { display: grid; grid-template-columns: 1fr 2fr 1fr; gap: 10px; margin-top: auto; }
-        
-        .btn { border: none; padding: 14px; border-radius: 12px; font-weight: 600; font-size: 1rem; cursor: pointer; transition: 0.2s; display: flex; align-items: center; justify-content: center; }
-        .btn:disabled { opacity: 0.5; cursor: not-allowed; }
-        
-        .btn-primary { background: var(--primary); color: white; box-shadow: 0 4px 6px rgba(37, 99, 235, 0.2); }
-        .btn-primary:active { transform: translateY(2px); }
-        
-        .btn-secondary { background: #E5E7EB; color: var(--text); }
-        .btn-secondary:active { background: #D1D5DB; }
+        /* Options List */
+        .options-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
 
-        /* Telegram Fixed Icon */
+        .option-item {
+            display: flex;
+            align-items: flex-start;
+            padding: 12px 15px;
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 1rem;
+            line-height: 1.4;
+            color: var(--text-color);
+            position: relative;
+        }
+
+        .option-item:hover:not(.submitted) {
+            background-color: #F8F8F8;
+        }
+
+        .option-item.selected:not(.submitted) {
+            background-color: var(--selected-highlight);
+            border-color: var(--selected-border);
+        }
+
+        .option-prefix {
+            font-weight: bold;
+            margin-right: 10px;
+            flex-shrink: 0; /* чтобы префикс не сжимался */
+            color: #666;
+        }
+
+        /* Submitted states */
+        .option-item.correct {
+            background-color: var(--correct-bg);
+            border-color: var(--correct-border);
+            color: #155724; /* Темно-зеленый текст */
+        }
+        .option-item.incorrect {
+            background-color: var(--incorrect-bg);
+            border-color: var(--incorrect-border);
+            color: #721C24; /* Темно-красный текст */
+        }
+        .option-item.missed { /* Если правильный, но не выбрали */
+            border-color: var(--correct-border);
+            background-color: var(--correct-bg);
+            opacity: 0.7; /* Немного бледнее, чтобы показать, что пропустили */
+        }
+
+        .option-item.submitted {
+            cursor: default; /* Отключить клик после ответа */
+        }
+
+        /* Controls */
+        .controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
+            background-color: var(--nav-button-bg);
+            color: var(--nav-button-text);
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background-color 0.2s ease, border-color 0.2s ease;
+            flex: 1; /* Чтобы кнопки занимали равное пространство */
+        }
+
+        .btn:hover:not(:disabled) {
+            background-color: var(--nav-button-hover);
+        }
+
+        .btn-action {
+            background-color: var(--button-bg);
+            color: var(--button-text);
+            border-color: var(--button-bg);
+        }
+
+        .btn-action:hover:not(:disabled) {
+            background-color: var(--button-hover);
+            border-color: var(--button-hover);
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        /* Telegram Floating Icon */
         .tg-float {
             position: fixed;
             bottom: 20px;
             right: 20px;
             background-color: var(--tg-color);
             color: white;
-            width: 60px;
-            height: 60px;
+            width: 55px;
+            height: 55px;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 30px;
+            font-size: 28px;
             box-shadow: 0 4px 15px rgba(36, 129, 204, 0.4);
             z-index: 100;
             text-decoration: none;
@@ -98,39 +204,76 @@
         }
         .tg-float:hover { transform: scale(1.1); }
         .tg-label {
-            position: absolute; right: 70px; background: rgba(0,0,0,0.7); color: white; padding: 5px 10px; border-radius: 5px; font-size: 12px; opacity: 0; transition: 0.3s; white-space: nowrap; pointer-events: none;
+            position: absolute; right: 65px; background: rgba(0,0,0,0.7); color: white; padding: 5px 10px; border-radius: 5px; font-size: 12px; opacity: 0; transition: 0.3s; white-space: nowrap; pointer-events: none;
         }
         .tg-float:hover .tg-label { opacity: 1; }
 
         /* Result Screen */
-        .result-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg); z-index: 50; display: none; flex-direction: column; align-items: center; justify-content: center; padding: 20px; text-align: center; }
-        .score-big { font-size: 4rem; font-weight: 800; color: var(--primary); margin: 20px 0; }
-
+        .result-screen {
+            display: none; /* Скрыть по умолчанию */
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: var(--primary-bg);
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 20px;
+            z-index: 101;
+        }
+        .result-screen h2 {
+            font-size: 2rem;
+            color: var(--question-color);
+            margin-bottom: 20px;
+        }
+        .score-display {
+            font-size: 4rem;
+            font-weight: bold;
+            color: var(--button-bg);
+            margin-bottom: 20px;
+        }
+        .result-message {
+            font-size: 1.1rem;
+            margin-bottom: 30px;
+            color: var(--text-color);
+        }
+        .restart-btn {
+            background-color: var(--button-bg);
+            color: var(--button-text);
+            border: none;
+            padding: 12px 25px;
+            border-radius: 5px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
+        .restart-btn:hover {
+            background-color: var(--button-hover);
+        }
     </style>
 </head>
 <body>
 
     <div class="container">
-        <header>
-            <h1>Анатомия и Пищеварение</h1>
-            <div class="progress-text" id="q-indicator">1 / 91</div>
-        </header>
-
-        <div class="progress-track">
-            <div class="progress-fill" id="progress-bar"></div>
+        <div class="question-header">
+            <h2>Задание №<span id="question-id">902</span></h2>
+            <div class="question-info">
+                Вопрос <span id="current-q-num">1</span> из <span id="total-q-num">91</span>
+            </div>
         </div>
 
-        <div class="card">
-            <span class="question-badge" id="q-id-badge">Вопрос №902</span>
-            <div class="question-text" id="q-text">Загрузка вопроса...</div>
-            <div class="options-grid" id="options-area">
-                </div>
-
-            <div class="nav-controls">
-                <button class="btn btn-secondary" id="btn-prev" onclick="prevQuestion()"><i class="fas fa-arrow-left"></i></button>
-                <button class="btn btn-primary" id="btn-action" onclick="checkOrNext()">Ответить</button>
-                <button class="btn btn-secondary" id="btn-next" onclick="nextQuestion()"><i class="fas fa-arrow-right"></i></button>
+        <div class="question-text" id="question-text">Загрузка вопроса...</div>
+        
+        <div class="options-list" id="options-area">
             </div>
+
+        <div class="controls">
+            <button class="btn" id="prev-btn" onclick="goToPrevQuestion()"><i class="fas fa-arrow-left"></i> Предыдущий</button>
+            <button class="btn btn-action" id="action-btn" onclick="checkAnswer()">Ответить</button>
+            <button class="btn" id="next-btn" onclick="goToNextQuestion()">Следующий <i class="fas fa-arrow-right"></i></button>
         </div>
     </div>
 
@@ -139,16 +282,15 @@
         <span class="tg-label">Автор: stewonly</span>
     </a>
 
-    <div class="result-overlay" id="result-screen">
-        <h1>Тест завершен!</h1>
-        <div class="score-big" id="final-score">0%</div>
-        <p>Вы ответили правильно на <span id="correct-count">0</span> из <span id="total-count">0</span> вопросов.</p>
-        <br>
-        <button class="btn btn-primary" onclick="location.reload()" style="width: 200px;">Пройти заново</button>
+    <div class="result-screen" id="result-screen">
+        <h2>Тест завершен!</h2>
+        <div class="score-display" id="final-score">0%</div>
+        <p class="result-message">Вы ответили верно на <span id="correct-answers-count">0</span> из <span id="total-questions-count">0</span> вопросов.</p>
+        <button class="restart-btn" onclick="location.reload()">Пройти заново</button>
     </div>
 
     <script>
-        // --- ДАННЫЕ ---
+        // --- ДАННЫЕ ВОПРОСОВ ---
         const quizData = [
             {id:902,q:"Укажите особенности, характерные для полого органа:",opts:["имеет строму и паренхиму","имеет паренхиму и дольчатое строение","имеет внутреннюю полость и 3-х слойную стенку","имеет строму и внутреннюю полость"],correct:[2]},
             {id:903,q:"Укажите особенности, характерные для паренхиматозного органа:",opts:["имеет внутреннюю полость и 3-х слойную стенку","имеет паренхиму и дольчатое строение","имеет строму и паренхиму","имеет строму и внутреннюю полость"],correct:[1,2]},
@@ -227,173 +369,17 @@
             {id:976,q:"рН желудочного содержимого в желудочную фазу может достигать:",opts:["3,1-4,0","7,0-8,5","0,8-1,0","1,5-2,0"],correct:[2]},
             {id:977,q:"рН желудочного содержимого во время приема пищи составляет:",opts:["3,1-4,0","0,8-1,0","1,5-2,0","8,0-9,0"],correct:[0]},
             {id:978,q:"Протеолитические ферменты секрета желудка в щелочной среде…",opts:["ингибируются","не изменяют своих свойств","активируются"],correct:[0]},
-            {id:979,q:"С наименьшей скоростью из желудка эвакуируются…",opts:["белки","витамины","жиры","углеводы"],correct:[2]},
-            {id:980,q:"Желудочный секрет имеет наибольшую кислотность при переваривании…",opts:["балластных веществ","жиров","углеводов","белков"],correct:[3]},
-            {id:981,q:"Причиной анемии при удалении желудка или его значительной части является:",opts:["дефицит аминокислот","дефицит железа","дефицит витамина B12","недостаток гастрина"],correct:[2]},
-            {id:982,q:"Функцию депонирования пищи выполняет:",opts:["тонкий кишечник","желудок","прямая кишка","толстый кишечник"],correct:[1]},
-            {id:983,q:"Величина суточного объема желудочного секрета у взрослого человека составляет:",opts:["1,5-3 л","более 3 л","0,5-0,7 л","0,1-0,3 л"],correct:[0]},
-            {id:984,q:"Компонентом желудочного секрета, предохраняющий слизистую оболочку желудка от самопереваривания является:",opts:["соляная кислота","липаза","муцин","пепсин","гастриксин"],correct:[2]},
-            {id:985,q:"Защита слизистой оболочки желудка от действия агрессивных факторов не осуществляется с помощью:",opts:["слизистого барьера","высокой степени регенерации слизистой оболочки","пепсина, соляной кислоты","лизоцима, муцина"],correct:[2]},
-            {id:986,q:"Прием алкоголя натощак вызывает быстрое опьянение поскольку:",opts:["происходит его всасывание в тонком кишечнике","происходит его всасывание в желудке","происходит его всасывание в ротовой полости","активируется его метаболизм"],correct:[1]},
-            {id:987,q:"Открытию пилорического сфинктера желудка способствуют:",opts:["щелочная среда в пилорическом отделе желудка и в 12-перстной кишке","кислая среда в пилорическом отделе желудка и в 12-перстной кишке","кислая среда в пилорическом отделе желудка и щелочная в 12-перстной кишке","щелочная среда в пилорическом отделе желудка и кислая в 12-перстной кишке"],correct:[2]},
-            {id:988,q:"Кривые желудочной секреции, полученные И.П. Павловым экспериментальным путем отражают:",opts:["степень переваривания жиров, белков и углеводов в желудке","скорость поступления пищи в желудок","скорость опорожнения желудка","объем депонированной в желудке пищи","приспособительный характер секреции желудка к количеству и составу пищи"],correct:[4]},
-            {id:989,q:"Ферментативной обработке в желудке подвергаются:",opts:["белки, эмульгированные жиры и незначительно углеводы","только жиры","только белки","только белки и эмульгированные жиры","только эмульгированные жиры и углеводы"],correct:[0]},
-            {id:990,q:"К повреждающим факторам желудочного сока относятся:",opts:["достаточное кровоснабжение слизистой оболочки","регенерация эпителиальных клеток в слизистой оболочке","соляная кислота и пепсин","желудочная слизь (муцины)"],correct:[2]},
-            {id:991,q:"Электрогастрография – это регистрация суммарной электрической активности…",opts:["кишечника","стенки сосудов","двенадцатиперстной кишки","желудка"],correct:[3]},
             {id:992,q:"Одновременная и полная характеристика секреторной и моторной функции желудка осуществляется с помощью:",opts:["зондирования желудка","рентгеноскопии","рентгенографии","электрогастрографии"],correct:[0]}
         ];
 
-        // --- СОСТОЯНИЕ ПРИЛОЖЕНИЯ ---
-        let currentIndex = 0;
-        // Храним для каждого вопроса: selected (Set of indexes), isSubmitted (bool), isCorrect (bool)
-        let userState = Array(quizData.length).fill(null).map(() => ({
-            selected: new Set(),
+        // --- СОСТОЯНИЕ ТЕСТА ---
+        let currentQuestionIndex = 0;
+        let userAnswers = Array(quizData.length).fill(null).map(() => ({
+            selectedOptions: new Set(),
             isSubmitted: false,
             isCorrect: false
         }));
 
-        const qTextEl = document.getElementById('q-text');
-        const qIdBadge = document.getElementById('q-id-badge');
-        const optionsArea = document.getElementById('options-area');
-        const btnAction = document.getElementById('btn-action');
-        const progressBar = document.getElementById('progress-bar');
-        const qIndicator = document.getElementById('q-indicator');
-        const btnPrev = document.getElementById('btn-prev');
-        const btnNext = document.getElementById('btn-next');
-
-        function renderQuestion() {
-            const currentData = quizData[currentIndex];
-            const state = userState[currentIndex];
-
-            qIdBadge.textContent = `Вопрос №${currentData.id}`;
-            qTextEl.textContent = currentData.q;
-            qIndicator.textContent = `${currentIndex + 1} / ${quizData.length}`;
-            
-            // Прогресс бар
-            const progressPercent = ((currentIndex + 1) / quizData.length) * 100;
-            progressBar.style.width = `${progressPercent}%`;
-
-            // Очистка
-            optionsArea.innerHTML = '';
-
-            // Рендер опций
-            currentData.opts.forEach((optText, idx) => {
-                const div = document.createElement('div');
-                div.className = 'option-item';
-                
-                // Если уже ответили - красим
-                if (state.isSubmitted) {
-                    // Если это правильный ответ
-                    if (currentData.correct.includes(idx)) {
-                        div.classList.add('correct');
-                    } 
-                    // Если выбрали, но неправильно
-                    else if (state.selected.has(idx)) {
-                        div.classList.add('incorrect');
-                    }
-                    // Если правильный, но не выбрали (missed)
-                    if (currentData.correct.includes(idx) && !state.selected.has(idx)) {
-                        div.classList.add('missed');
-                    }
-                    // Курсор не активен
-                    div.style.cursor = 'default';
-                } else {
-                    // Если еще не ответили - просто подсветка выбранного
-                    if (state.selected.has(idx)) {
-                        div.classList.add('selected');
-                    }
-                    div.onclick = () => toggleOption(idx);
-                }
-
-                div.innerHTML = `
-                    <div class="checkbox"></div>
-                    <span>${optText}</span>
-                `;
-                optionsArea.appendChild(div);
-            });
-
-            // Состояние кнопок навигации
-            btnPrev.disabled = (currentIndex === 0);
-            
-            // Логика центральной кнопки (Ответить / Далее)
-            if (state.isSubmitted) {
-                btnAction.style.display = 'none'; // Если ответили, скрываем кнопку "Ответить", работаем через стрелочки
-                btnNext.disabled = false;
-            } else {
-                btnAction.style.display = 'block';
-                btnAction.textContent = 'Ответить';
-                btnAction.disabled = (state.selected.size === 0);
-                btnNext.disabled = true; // Нельзя идти дальше, пока не ответил (опционально, но для тренажера логично)
-            }
-
-            // Если это последний вопрос и уже отвечен - кнопка финиша
-            if (currentIndex === quizData.length - 1 && state.isSubmitted) {
-                btnNext.innerHTML = '<i class="fas fa-flag-checkered"></i>';
-                btnNext.onclick = showResults;
-            } else {
-                btnNext.innerHTML = '<i class="fas fa-arrow-right"></i>';
-                btnNext.onclick = nextQuestion;
-            }
-        }
-
-        function toggleOption(idx) {
-            const state = userState[currentIndex];
-            if (state.isSubmitted) return;
-
-            if (state.selected.has(idx)) {
-                state.selected.delete(idx);
-            } else {
-                state.selected.add(idx);
-            }
-            renderQuestion();
-        }
-
-        function checkOrNext() {
-            const state = userState[currentIndex];
-            // Если еще не ответили - проверяем
-            if (!state.isSubmitted) {
-                const currentData = quizData[currentIndex];
-                state.isSubmitted = true;
-
-                // Сравнение массивов
-                const userArr = Array.from(state.selected).sort();
-                const correctArr = [...currentData.correct].sort();
-                const isMatch = JSON.stringify(userArr) === JSON.stringify(correctArr);
-                
-                state.isCorrect = isMatch;
-                
-                renderQuestion();
-            }
-        }
-
-        function nextQuestion() {
-            if (currentIndex < quizData.length - 1) {
-                currentIndex++;
-                renderQuestion();
-            }
-        }
-
-        function prevQuestion() {
-            if (currentIndex > 0) {
-                currentIndex--;
-                renderQuestion();
-            }
-        }
-
-        function showResults() {
-            const correctCount = userState.filter(s => s.isCorrect).length;
-            const total = quizData.length;
-            const percent = Math.round((correctCount / total) * 100);
-
-            document.getElementById('final-score').textContent = `${percent}%`;
-            document.getElementById('correct-count').textContent = correctCount;
-            document.getElementById('total-count').textContent = total;
-            document.getElementById('result-screen').style.display = 'flex';
-        }
-
-        // Запуск
-        renderQuestion();
-
-    </script>
-</body>
-</html>
+        // --- ЭЛЕМЕНТЫ DOM ---
+        const questionIdEl = document.getElementById('question-id');
+        const
